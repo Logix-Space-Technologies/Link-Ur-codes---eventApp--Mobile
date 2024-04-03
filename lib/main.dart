@@ -1,3 +1,4 @@
+import 'package:event_app_mobile/pages/college/CollegeLogin.dart';
 import 'package:event_app_mobile/pages/homepage.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +13,7 @@ class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomePage(),
+      home: CollegeLogin(),
     );
   }
 }
