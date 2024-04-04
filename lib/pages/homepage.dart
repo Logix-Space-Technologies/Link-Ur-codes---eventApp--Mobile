@@ -47,6 +47,7 @@ class _HomePageState extends State<HomePage> {
 
       if (response['status'] == 'Success') {
         print("success"); // Print success message
+        Navigator.pop(context);
         // Successful login, navigate to next screen or perform appropriate actions
       } else {
         // Handle different error scenarios
@@ -55,8 +56,6 @@ class _HomePageState extends State<HomePage> {
             errorMessage = 'Invalid Email ID';
           } else if (response['status'] == 'Invalid Password') {
             errorMessage = 'Invalid Password';
-          } else {
-            errorMessage = 'An error occurred. Please try again later.';
           }
         });
       }
