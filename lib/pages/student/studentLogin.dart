@@ -1,17 +1,18 @@
+import 'package:event_app_mobile/services/studentServices.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../services/collegeService.dart';
 
-class CollegeLogin extends StatefulWidget {
+class StudentLogin extends StatefulWidget {
   @override
-  _CollegeLoginState createState() => _CollegeLoginState();
+  _StudentLoginState createState() => _StudentLoginState();
 }
 
-class _CollegeLoginState extends State<CollegeLogin> {
+class _StudentLoginState extends State<StudentLogin> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isObscure = true;
-  final CollegeLoginService _collegeLoginService = CollegeLoginService();
+  final StudentApiService _studentApiService = StudentApiService();
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +25,12 @@ class _CollegeLoginState extends State<CollegeLogin> {
             SizedBox(
               width: 5,
             ),
-            Text('College Login',style: TextStyle(color:  Color(0xFFFFFFFF),fontWeight: FontWeight.bold),),
+            Text('Student Login',style: TextStyle(color:  Color(0xFFFFFFFF),fontWeight: FontWeight.bold),),
           ],
         ),
-        leading: IconButton(onPressed: (){Navigator.pop(context);}, icon:Icon(Icons.arrow_back_ios_new,color:  Color(0xFFFFFFFF),)),
+        leading: IconButton(onPressed: (){Navigator.pop(context);}, icon:Icon(Icons.arrow_back_ios_new,color:  Color(
+            0xFFFFFFFF),)),
+
       ),
       body: Container(
         padding: EdgeInsets.all(20.0),
@@ -95,11 +98,12 @@ class _CollegeLoginState extends State<CollegeLogin> {
     );
   }
 
+
   void _login() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
-    final response = await _collegeLoginService.login(email, password);
+    final response = await _studentApiService.login(email, password);
 
     if (response['success']) {
       final data = response['data'];
@@ -107,11 +111,10 @@ class _CollegeLoginState extends State<CollegeLogin> {
 
       // Store college_id and token in shared preferences
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setInt('college_id', data['college_id']);
-      prefs.setString('college_token', token);
-
-      print('College ID: ${data['college_id']}');
-      print('College Token: $token');
+      prefs.setInt('student_id', data['student_id']);
+      prefs.setString('student_token', token);
+      print('Student ID: ${data['student_id']}');
+      print('Student Token: $token');
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

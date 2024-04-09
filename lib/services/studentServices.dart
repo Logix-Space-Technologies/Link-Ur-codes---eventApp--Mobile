@@ -1,15 +1,14 @@
+import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:http/http.dart'as http;
-
-class userApiService {
-  Future<Map<String, dynamic>> loginApi(String email, String password) async {
-    final url = Uri.parse('http://localhost:8085/api/users/loginuser');
+class StudentApiService {
+  Future<Map<String, dynamic>> login(String email, String password) async {
+    final url = Uri.parse('http://localhost:8085/api/student/loginstudent');
     final response = await http.post(
       url,
       body: jsonEncode({
-        'user_email': email,
-        'user_password': password,
+        'student_email': email,
+        'student_password': password,
       }), // Encode the body to JSON
       headers: {'Content-Type': 'application/json'},
     );
@@ -20,7 +19,7 @@ class userApiService {
         return {
           'success': true,
           'message': 'Login successful',
-          'data': responseData['userData'],
+          'data': responseData['studentData'],
           'token': responseData['token'],
         };
       } else if (responseData['status'] == 'Invalid Email ID') {
@@ -36,13 +35,13 @@ class userApiService {
       } else {
         return {
           'success': false,
-          'message': 'Failed to login User',
+          'message': 'Failed to login student',
         };
       }
     } else {
       return {
         'success': false,
-        'message': 'Failed to login User',
+        'message': 'Failed to login student',
       };
     }
   }
