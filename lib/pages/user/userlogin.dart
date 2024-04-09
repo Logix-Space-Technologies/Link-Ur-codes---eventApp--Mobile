@@ -1,99 +1,139 @@
 import 'package:event_app_mobile/services/userService.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserLogin extends StatefulWidget {
-  const UserLogin({super.key});
-
   @override
-  State<UserLogin> createState() => _UserLoginState();
+  _UserLoginState createState() => _UserLoginState();
 }
 
 class _UserLoginState extends State<UserLogin> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  String errorMessage = '';
-  bool isLoading = false; // Add isLoading state
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
-  }
-
-  void login() async {
-    setState(() => isLoading = true); // Start loading
-    final response = await userApiService().loginApi(
-      emailController.text,
-      passwordController.text,
-    );
-
-    if (response['status'] == 'Success') {
-      print("success"); // Print success message
-      // Navigate to next screen or perform successful login actions
-    } else {
-      // Handle different error scenarios
-      setState(() {
-        errorMessage = response['message'] ?? 'Unknown error occurred';
-      });
-    }
-    setState(() => isLoading = false); // Stop loading
-  }
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _isObscure = true;
+  final userApiService _userApiService = userApiService();
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(),
-        body: isLoading // Check if loading
-            ? Center(child: CircularProgressIndicator())
-            : Column(
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Padding(
-              padding: EdgeInsets.all(20),
-              child: Text(
-                "User Login",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
+            SizedBox(
+              width: 5,
             ),
-            const SizedBox(height: 10),
-            if (errorMessage.isNotEmpty) // Display error message if it exists
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(errorMessage, style: TextStyle(color: Colors.red)),
+            Text('User Login',style: TextStyle(color:  Color(0xFFFFFFFF),fontWeight: FontWeight.bold),),
+          ],
+        ),
+        leading: IconButton(onPressed: (){Navigator.pop(context);}, icon:Icon(Icons.arrow_back_ios_new,color:  Color(0xFFFFFFFF),)),
+      ),
+      body: Container(
+        padding: EdgeInsets.all(20.0),
+        color: Colors.white,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextFormField(
+              controller: _emailController,
+              decoration: InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                filled: true,
+                fillColor: Colors.grey[200],
+                prefixIcon: Icon(Icons.email),
               ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: TextFormField(
-                controller: emailController,
-                decoration: InputDecoration(
-                  labelText: "Email ID",
-                  border: OutlineInputBorder(),
+              style: TextStyle(color: Colors.black),
+            ),
+            SizedBox(height: 20.0),
+            TextFormField(
+              controller: _passwordController,
+              obscureText: _isObscure, // Use _isObscure to toggle visibility
+              decoration: InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                filled: true,
+                fillColor: Colors.grey[200],
+                prefixIcon: Icon(Icons.lock),
+                suffixIcon: IconButton(
+                  icon: Icon(_isObscure ? Icons.visibility : Icons.visibility_off),
+                  onPressed: () {
+                    setState(() {
+                      _isObscure = !_isObscure; // Toggle visibility on button press
+                    });
+                  },
                 ),
               ),
+              style: TextStyle(color: Colors.black),
             ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: TextFormField(
-                controller: passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: "Password",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            SizedBox(height: 20.0),
+            Align(
+              alignment: Alignment.centerRight,
               child: ElevatedButton(
-                onPressed: login,
-                child: Text("Login"),
+                onPressed: _login,
+                child: Text(
+                  'Login',
+                  style: TextStyle(color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+
+  void _login() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    final response = await _userApiService.loginApi(email, password);
+
+    if (response['success']) {
+      final data = response['data'];
+      final token = response['token'];
+
+      // Store college_id and token in shared preferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setInt('user_id', data['user_id']);
+      prefs.setString('user_token', token);
+      print('User ID: ${data['user_id']}');
+      print('User Token: $token');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(response['message']),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(response['message']),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 }

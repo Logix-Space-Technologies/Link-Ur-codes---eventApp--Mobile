@@ -1,7 +1,7 @@
 
 import 'package:event_app_mobile/pages/college/collegelogin.dart';
+import 'package:event_app_mobile/pages/student/studentLogin.dart';
 import 'package:event_app_mobile/pages/user/userlogin.dart';
-import 'package:event_app_mobile/services/userService.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -56,7 +56,7 @@ class _HomePageState extends State<HomePage> {
               ListTile(
                 title: const Text("STUDENT LOGIN"),
                 onTap: () {
-                  //Navigator.push(context, MaterialPageRoute(builder: (context)=>()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>StudentLogin()));
                 },
               ),
             ],
