@@ -6,7 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AdminLoginScreen extends StatefulWidget {
   @override
-  _AdminLoginScreenState createState() => _AdminLoginScreenState();
+
+   createState() => _AdminLoginScreenState();
 }
 
 class _AdminLoginScreenState extends State<AdminLoginScreen> {
