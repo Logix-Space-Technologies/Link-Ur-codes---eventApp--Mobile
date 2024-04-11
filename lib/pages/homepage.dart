@@ -1,4 +1,5 @@
 
+import 'package:event_app_mobile/pages/admin/adminlogin.dart';
 import 'package:event_app_mobile/pages/college/collegelogin.dart';
 import 'package:event_app_mobile/pages/student/studentLogin.dart';
 import 'package:event_app_mobile/pages/user/userlogin.dart';
@@ -38,7 +39,7 @@ class _HomePageState extends State<HomePage> {
               ListTile(
                 title: const Text("ADMIN LOGIN"),
                 onTap: () {
-                  // Navigator.push(context, MaterialPageRoute(builder: (context)=>()));
+                   Navigator.push(context, MaterialPageRoute(builder: (context)=>AdminLogin()));
                 },
               ),
               ListTile(
