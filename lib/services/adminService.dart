@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 
 class AdminService {
-  static const String baseUrl = 'http://localhost:8085/api/admin'; // Update with your API base URL
+  static const String baseUrl = 'http://192.168.1.8:8085/api/admin'; // Update with your API base URL
 
   static Future<Map<String, dynamic>> loginAdmin(String username, String password) async {
     final url = Uri.parse('$baseUrl/loginadmin');
