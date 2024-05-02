@@ -23,12 +23,12 @@ class _AdminLoginState extends State<AdminLogin> {
     try {
       final response = await AdminService.loginAdmin(username, password);
       if (response['status'] == 'success') {
-        final token = response['admintoken'];
+        final admintoken = response['admintoken'];
 
         // Save token to SharedPreferences
         final prefs = await SharedPreferences.getInstance();
-        prefs.setString('admintoken', token);
-        print("admintoken:"+token);
+        prefs.setString('admintoken', admintoken);
+        print("admintoken:"+admintoken);
 
         // Navigate to admin dashboard or any desired page
         Navigator.push(context, MaterialPageRoute(builder: (context)=>AdminHome()));
