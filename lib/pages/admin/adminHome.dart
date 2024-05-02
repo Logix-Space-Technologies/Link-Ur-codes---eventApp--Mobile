@@ -1,5 +1,6 @@
 import 'package:event_app_mobile/pages/admin/adminCollegePage.dart';
 import 'package:event_app_mobile/pages/admin/adminEventPage.dart';
+import 'package:event_app_mobile/pages/admin/adminUserPage.dart';
 import 'package:flutter/material.dart';
 
 class AdminHome extends StatefulWidget {
@@ -13,7 +14,7 @@ class _AdminHomeState extends State<AdminHome> {
   final List<Widget> pages = [
     AdminEventPage(),
     AdminCollegePage(),
-    UpdatePackagePage()
+    AdminUserPage()
   ];
   int currentIndex = 0;
 
@@ -72,24 +73,3 @@ class _AdminHomeState extends State<AdminHome> {
     );
   }
 }
-
-// class MemberMenuPage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Center(child: Text("Member Menu Page"));
-//   }
-// }
-
-class UpdatePackagePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text("Update Package Page"));
-  }
-}
-
-// class PaymentPage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Center(child: Text("Payment Page"));
-//   }
-// }
