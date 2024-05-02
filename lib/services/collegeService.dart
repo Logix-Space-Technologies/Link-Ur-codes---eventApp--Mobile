@@ -45,4 +45,29 @@ class CollegeLoginService {
       };
     }
   }
+
+  Future<Map<String, dynamic>> getCollegeDetails(String collegeToken) async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://localhost:8085/api/college/Viewcollegedetail'),
+        headers: {
+          'Content-Type': 'application/json',
+          'collegetoken': collegeToken,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        if (responseData['status'] == 'success') {
+          return responseData['collegedata'];
+        } else {
+          throw Exception(responseData['message']);
+        }
+      } else {
+        throw Exception('Failed to load college details');
+      }
+    } catch (e) {
+      throw Exception('Failed to fetch college details: $e');
+    }
+  }
 }
