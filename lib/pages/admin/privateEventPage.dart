@@ -1,4 +1,5 @@
 import 'package:event_app_mobile/models/privateEventModel.dart';
+import 'package:event_app_mobile/pages/admin/addPrivateEvent.dart';
 import 'package:event_app_mobile/services/adminService.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,6 +19,9 @@ class _PrivateEventPageState extends State<PrivateEventPage> {
     super.initState();
     privateEvents = loadPrivateEvents();
   }
+  void handleSearch(){
+
+  }
 
   Future<List<PrivateEvents>> loadPrivateEvents() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -35,7 +39,29 @@ class _PrivateEventPageState extends State<PrivateEventPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Private Events"),
+        toolbarHeight: 80,
+        backgroundColor: Colors.white,
+        title: Row(
+          children: [
+            Expanded(
+              child: TextField(  // Replacing SearchBar with TextField for demonstration
+                decoration: InputDecoration(
+                  hintText: "Search Private Events...",
+                  border: InputBorder.none,
+                ),
+                onChanged: (value) {
+                  // Implement search logic
+                },
+              ),
+            ),
+            IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () {
+                // You might want to trigger search based on the text field input
+              },
+            )
+          ],
+        ),
       ),
       body: FutureBuilder<List<PrivateEvents>>(
         future: privateEvents,
@@ -64,6 +90,17 @@ class _PrivateEventPageState extends State<PrivateEventPage> {
             return Center(child: Text("No data available"));
           }
         },
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder:
+              (context)=>AddPrivateEvent()));
+        },
+        label: Text("Add Event"), // Text to display
+        icon: Icon(Icons.add), // Icon to display
+        backgroundColor: Colors.black, // Background color of the button
+        foregroundColor: Colors.white, // Color of the icon and text
       ),
     );
   }

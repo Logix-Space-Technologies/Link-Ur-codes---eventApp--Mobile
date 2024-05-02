@@ -83,4 +83,26 @@ class AdminService {
       client.close();
     }
   }
+
+  Future<dynamic> getColleges(String token) async {
+    var client = http.Client();
+    var apiUrl = Uri.parse("http://192.168.1.8:8085/api/college/Viewcollege");
+    try {
+      var response = await client.post(
+        apiUrl,
+        headers: <String, String>{
+          "Content-Type": "application/json",
+          "token": token, // Authentication token usually goes in the headers
+        },
+      );
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        // Improved error message for debugging
+        throw Exception('Failed to search. Status code: ${response.statusCode}. Response body: ${response.body}');
+      }
+    } finally {
+      client.close();
+    }
+  }
 }

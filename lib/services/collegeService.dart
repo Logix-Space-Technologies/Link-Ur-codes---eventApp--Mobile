@@ -3,7 +3,7 @@ import 'dart:convert';
 
 class CollegeLoginService {
   Future<Map<String, dynamic>> login(String email, String password) async {
-    final url = Uri.parse('http://localhost:8085/api/college/collegeLogin');
+    final url = Uri.parse('http://192.168.1.8:8085/api/college/collegeLogin');
     final response = await http.post(
       url,
       body: jsonEncode({

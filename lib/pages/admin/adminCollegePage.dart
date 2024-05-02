@@ -1,38 +1,34 @@
-import 'package:event_app_mobile/models/publicEventModel.dart';
-import 'package:event_app_mobile/pages/admin/addPublicEvent.dart';
+import 'package:event_app_mobile/models/adminCollege.dart';
+import 'package:event_app_mobile/pages/admin/addCollegePage.dart';
 import 'package:event_app_mobile/services/adminService.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class PublicEventPage extends StatefulWidget {
-  const PublicEventPage({super.key});
+class AdminCollegePage extends StatefulWidget {
+  const AdminCollegePage({super.key});
 
   @override
-  State<PublicEventPage> createState() => _PublicEventPageState();
+  State<AdminCollegePage> createState() => _AdminCollegePageState();
 }
 
-class _PublicEventPageState extends State<PublicEventPage> {
-  late Future<List<PublicEvents>> publicEvents;
+class _AdminCollegePageState extends State<AdminCollegePage> {
+  late Future<List<Colleges>> colleges;
 
   @override
   void initState() {
     super.initState();
-    publicEvents = loadPublicEvents();
+    colleges = loadColleges();
   }
 
-  void handleSearch(){
-
-  }
-
-  Future<List<PublicEvents>> loadPublicEvents() async {
+  Future<List<Colleges>> loadColleges() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String adminToken = prefs.getString("admintoken") ?? "";
     try {
-      var response = await AdminService().getPublicEvents(adminToken);
-      return response.map<PublicEvents>((item) => PublicEvents.fromJson(item)).toList();
+      var response = await AdminService().getColleges(adminToken);
+      return response.map<Colleges>((item) => Colleges.fromJson(item)).toList();
     } catch (e) {
-      print("Error fetching public events: $e");
-      throw e;
+      print("Error fetching colleges: $e");
+      return [];  // Return an empty list in case of error
     }
   }
 
@@ -47,7 +43,7 @@ class _PublicEventPageState extends State<PublicEventPage> {
             Expanded(
               child: TextField(  // Replacing SearchBar with TextField for demonstration
                 decoration: InputDecoration(
-                  hintText: "Search Public Events...",
+                  hintText: "Search colleges...",
                   border: InputBorder.none,
                 ),
                 onChanged: (value) {
@@ -64,24 +60,25 @@ class _PublicEventPageState extends State<PublicEventPage> {
           ],
         ),
       ),
-      body: FutureBuilder<List<PublicEvents>>(
-        future: publicEvents,
+      body: FutureBuilder<List<Colleges>>(
+        future: colleges,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text("Error: ${snapshot.error}"));
+            return Center(child: Text("Error: ${snapshot.error.toString()}"));
           } else if (snapshot.hasData) {
             return ListView.builder(
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
-                PublicEvents event = snapshot.data![index];
+                Colleges college = snapshot.data![index];
                 return Card(
                   child: ListTile(
                     leading: CircleAvatar(
-                      child: Text(event.eventPublicName[0]),
+                      child: Text(college.collegeName[0]), // Assuming collegeName is non-empty
                     ),
-                    subtitle: Text("Name: ${event.eventPublicName}\nVenue: ${event.eventVenue}\nAmount: ${event.eventPublicAmount}\nDescription: ${event.eventPublicDescription}\nDate: ${event.eventPublicDate}"),
+                    title: Text(college.collegeName),
+                    subtitle: Text("Email: ${college.collegeEmail}\nPhone: ${college.collegePhone}"),
                   ),
                 );
               },
@@ -94,13 +91,12 @@ class _PublicEventPageState extends State<PublicEventPage> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute(builder:
-                  (context)=>AddPublicEvent()));
+              MaterialPageRoute(builder: (context) => AddCollege()));
         },
-        label: Text("Add Event"), // Text to display
-        icon: Icon(Icons.add), // Icon to display
-        backgroundColor: Colors.black, // Background color of the button
-        foregroundColor: Colors.white, // Color of the icon and text
+        label: Text("Add College"),
+        icon: Icon(Icons.add),
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
       ),
     );
   }
