@@ -1,4 +1,5 @@
-import 'package:event_app_mobile/pages/admin/adminloginSuccess.dart';
+import 'package:event_app_mobile/pages/admin/adminHome.dart';
+import 'package:event_app_mobile/pages/homepage.dart';
 import 'package:event_app_mobile/services/adminService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -22,15 +23,15 @@ class _AdminLoginState extends State<AdminLogin> {
     try {
       final response = await AdminService.loginAdmin(username, password);
       if (response['status'] == 'success') {
-        final token = response['admintoken'];
+        final admintoken = response['admintoken'];
 
         // Save token to SharedPreferences
         final prefs = await SharedPreferences.getInstance();
-        prefs.setString('admintoken', token);
-        print("admintoken:"+token);
+        prefs.setString('admintoken', admintoken);
+        print("admintoken:"+admintoken);
 
         // Navigate to admin dashboard or any desired page
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>SuccessPage()));
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>AdminHome()));
       } else {
         // Display error message
         showDialog(
