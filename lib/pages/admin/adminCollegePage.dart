@@ -79,6 +79,14 @@ class _AdminCollegePageState extends State<AdminCollegePage> {
                     ),
                     title: Text(college.collegeName),
                     subtitle: Text("Email: ${college.collegeEmail}\nPhone: ${college.collegePhone}"),
+                    trailing: IconButton(
+                      icon: Icon(Icons.edit),
+                      onPressed: () {
+                        // Add action here that should be performed when the edit button is pressed
+                        // For example: Navigate to a different screen to edit the event
+                        print('Edit button pressed');
+                      },
+                    ),
                   ),
                 );
               },

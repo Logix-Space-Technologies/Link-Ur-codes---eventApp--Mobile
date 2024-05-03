@@ -89,6 +89,14 @@ class _PrivateEventPageState extends State<PrivateEventPage> {
                     // ),
                     title: Text(event.eventPrivateName),
                     subtitle: Text("Name: ${event.eventPrivateName}\nAmount: ${event.eventPrivateAmount}\nDescription: ${event.eventPrivateDescription}\nDate: ${event.eventPrivateDate}"),
+                    trailing: IconButton(
+                      icon: Icon(Icons.edit),
+                      onPressed: () {
+                        // Add action here that should be performed when the edit button is pressed
+                        // For example: Navigate to a different screen to edit the event
+                        print('Edit button pressed');
+                      },
+                    ),
                   ),
                 );
               },

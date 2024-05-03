@@ -82,6 +82,14 @@ class _PublicEventPageState extends State<PublicEventPage> {
                       child: Text(event.eventPublicName[0]),
                     ),
                     subtitle: Text("Name: ${event.eventPublicName}\nVenue: ${event.eventVenue}\nAmount: ${event.eventPublicAmount}\nDescription: ${event.eventPublicDescription}\nDate: ${event.eventPublicDate}"),
+                    trailing: IconButton(
+                      icon: Icon(Icons.edit),
+                      onPressed: () {
+                        // Add action here that should be performed when the edit button is pressed
+                        // For example: Navigate to a different screen to edit the event
+                        print('Edit button pressed');
+                      },
+                    ),
                   ),
                 );
               },
