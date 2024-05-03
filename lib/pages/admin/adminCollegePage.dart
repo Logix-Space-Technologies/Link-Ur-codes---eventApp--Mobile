@@ -32,6 +32,12 @@ class _AdminCollegePageState extends State<AdminCollegePage> {
     }
   }
 
+  Future<void> _saveToPreferences(String collegeIdAdmin) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('last_clicked_college_id', collegeIdAdmin);
+    print('Saved $collegeIdAdmin to SharedPreferences');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,7 +47,7 @@ class _AdminCollegePageState extends State<AdminCollegePage> {
         title: Row(
           children: [
             Expanded(
-              child: TextField(  // Replacing SearchBar with TextField for demonstration
+              child: TextField(
                 decoration: InputDecoration(
                   hintText: "Search colleges...",
                   border: InputBorder.none,
@@ -75,16 +81,15 @@ class _AdminCollegePageState extends State<AdminCollegePage> {
                 return Card(
                   child: ListTile(
                     leading: CircleAvatar(
-                      child: Text(college.collegeName[0]), // Assuming collegeName is non-empty
+                      child: Text(college.collegeName[0]),
                     ),
                     title: Text(college.collegeName),
                     subtitle: Text("Email: ${college.collegeEmail}\nPhone: ${college.collegePhone}"),
                     trailing: IconButton(
                       icon: Icon(Icons.edit),
-                      onPressed: () {
-                        // Add action here that should be performed when the edit button is pressed
-                        // For example: Navigate to a different screen to edit the event
-                        print('Edit button pressed');
+                      onPressed: () async {
+                        print('Edit button pressed for: ${college.collegeId}');
+                        await _saveToPreferences(college.collegeId.toString());
                       },
                     ),
                   ),
