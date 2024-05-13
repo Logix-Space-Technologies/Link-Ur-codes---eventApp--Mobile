@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:event_app_mobile/models/adminModel.dart';
+import 'package:event_app_mobile/models/publicEventModel.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
@@ -82,6 +83,8 @@ class AdminService {
       client.close();
     }
   }
+}
+
 
   Future<dynamic> getColleges(String token) async {
     var client = http.Client();
