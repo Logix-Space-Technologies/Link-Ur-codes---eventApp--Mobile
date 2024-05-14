@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:event_app_mobile/api_constants.dart';
+import 'package:event_app_mobile/models/publicEventModel.dart';
 import 'package:http/http.dart'as http;
 
 class userApiService {
@@ -44,6 +45,52 @@ class userApiService {
         'success': false,
         'message': 'Failed to login User',
       };
+    }
+  }
+
+  Future<dynamic> getPublicEvents(String token) async {
+    var client = http.Client();
+    var apiUrl = Uri.parse("${ApiConstants.baseUrl}/api/events/user_view_public_events");
+    try {
+      var response = await client.post(
+        apiUrl,
+        headers: <String, String>{
+          "Content-Type": "application/json",
+          "token": token, // Authentication token usually goes in the headers
+        },
+      );
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        // Improved error message for debugging
+        throw Exception('Failed to search. Status code: ${response.statusCode}. Response body: ${response.body}');
+      }
+    } finally {
+      client.close();
+    }
+  }
+
+  static Future<List<PublicEvents>> searchPublicEvents(String eventName, String token) async {
+    final Uri uri = Uri.parse('${ApiConstants.baseUrl}/api/events/search-user_public-events');
+    try {
+      final response = await http.post(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'token': token,
+        },
+        body: jsonEncode({'event_public_name': eventName}),
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        List<PublicEvents> events = data.map((e) => PublicEvents.fromJson(e)).toList();
+        return events;
+      } else {
+        throw Exception('Failed to load public events');
+      }
+    } catch (e) {
+      throw Exception('Failed to connect to the server: $e');
     }
   }
 }

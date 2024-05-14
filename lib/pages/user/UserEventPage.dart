@@ -1,5 +1,6 @@
 import 'package:event_app_mobile/models/publicEventModel.dart';
 import 'package:event_app_mobile/services/adminService.dart';
+import 'package:event_app_mobile/services/userService.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,9 +23,9 @@ class _UserEventPageState extends State<UserEventPage> {
 
   Future<List<PublicEvents>> loadPublicEvents() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String adminToken = prefs.getString("admintoken") ?? "";
+    String user_token = prefs.getString("user_token") ?? "";
     try {
-      var response = await AdminService().getPublicEvents(adminToken);
+      var response = await userApiService().getPublicEvents(user_token);
       if (response != null && response is List<dynamic>) {
         // Check if the response is not null and is of type List<dynamic>
         List<PublicEvents> events = response.map((item) => PublicEvents.fromJson(item)).toList();
@@ -40,9 +41,9 @@ class _UserEventPageState extends State<UserEventPage> {
 
   Future<void> _searchEvents(String eventName) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String adminToken = prefs.getString("admintoken") ?? "";
+    String user_token = prefs.getString("user_token") ?? "";
     try {
-      var searchResults = await AdminService.searchPublicEvents(eventName, adminToken);
+      var searchResults = await userApiService.searchPublicEvents(eventName, user_token);
       if (searchResults != null) {
         setState(() {
           publicEvents = Future.value(searchResults);
