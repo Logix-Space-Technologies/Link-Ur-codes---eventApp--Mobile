@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/collegeService.dart';
+import 'collegeHomePage.dart';
 
 class CollegeLogin extends StatefulWidget {
   @override
@@ -119,6 +120,7 @@ class _CollegeLoginState extends State<CollegeLogin> {
           backgroundColor: Colors.green,
         ),
       );
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>CollegeMenu()));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

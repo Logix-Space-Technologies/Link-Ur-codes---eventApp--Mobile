@@ -27,15 +27,6 @@ class _HomePageState extends State<HomePage> {
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
-              const DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                ),
-                child: Text(
-                  "LIST  ",
-                  style: TextStyle(fontSize: 15, color: Colors.white),
-                ),
-              ),
               ListTile(
                 title: const Text("ADMIN LOGIN"),
                 onTap: () {
