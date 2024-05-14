@@ -1,7 +1,5 @@
 import 'dart:convert';
-
 import 'package:event_app_mobile/api_constants.dart';
-import 'package:event_app_mobile/models/userModel.dart';
 import 'package:http/http.dart'as http;
 
 class userApiService {
