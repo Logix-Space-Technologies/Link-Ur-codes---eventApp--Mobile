@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 
 class AdminService {
-  static const String baseUrl = 'http://192.168.1.8:8085/api/admin'; // Update with your API base URL
+  static const String baseUrl = 'http://192.168.1.4:8085/api/admin'; // Update with your API base URL
 
   static Future<Map<String, dynamic>> loginAdmin(String username, String password) async {
     final url = Uri.parse('$baseUrl/loginadmin');
@@ -42,7 +42,7 @@ class AdminService {
 
   Future<dynamic> getPublicEvents(String token) async {
     var client = http.Client();
-    var apiUrl = Uri.parse("http://192.168.1.8:8085/api/events/view_public_events");
+    var apiUrl = Uri.parse("http://192.168.1.4:8085/api/events/view_public_events");
     try {
       var response = await client.post(
         apiUrl,
@@ -64,7 +64,7 @@ class AdminService {
 
   Future<dynamic> getPrivateEvents(String token) async {
     var client = http.Client();
-    var apiUrl = Uri.parse("http://192.168.1.8:8085/api/events/view_private_events");
+    var apiUrl = Uri.parse("http://192.168.1.4:8085/api/events/view_private_events");
     try {
       var response = await client.post(
         apiUrl,
@@ -86,7 +86,7 @@ class AdminService {
 
   Future<dynamic> getColleges(String token) async {
     var client = http.Client();
-    var apiUrl = Uri.parse("http://192.168.1.8:8085/api/college/Viewcollege");
+    var apiUrl = Uri.parse("http://192.168.1.4:8085/api/college/Viewcollege");
     try {
       var response = await client.post(
         apiUrl,
@@ -108,7 +108,7 @@ class AdminService {
 
   Future<dynamic> getUsers(String token) async {
     var client = http.Client();
-    var apiUrl = Uri.parse("http://192.168.1.8:8085/api/users/viewusers");
+    var apiUrl = Uri.parse("http://192.168.1.4:8085/api/users/viewusers");
     try {
       var response = await client.post(
         apiUrl,
