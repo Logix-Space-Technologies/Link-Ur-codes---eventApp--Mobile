@@ -1,3 +1,5 @@
+import 'package:event_app_mobile/pages/user/userHomePage.dart';
+import 'package:event_app_mobile/pages/user/userRegister.dart';
 import 'package:event_app_mobile/services/userService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -90,6 +92,26 @@ class _UserLoginState extends State<UserLogin> {
                 ),
               ),
             ),
+            SizedBox(height: 25.0),
+            Container(
+              alignment: Alignment.center,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              UserRegisterPage()));
+                },
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black),
+                child: Text(
+                  "Don't have an account? Sign Up",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -120,7 +142,9 @@ class _UserLoginState extends State<UserLogin> {
           backgroundColor: Colors.green,
         ),
       );
-    } else {
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>UserMenu()));
+    }
+    else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(response['message']),
