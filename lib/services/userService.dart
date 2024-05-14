@@ -1,10 +1,10 @@
 import 'dart:convert';
-
+import 'package:event_app_mobile/api_constants.dart';
 import 'package:http/http.dart'as http;
 
 class userApiService {
   Future<Map<String, dynamic>> loginApi(String email, String password) async {
-    final url = Uri.parse('http://localhost:8085/api/users/loginuser');
+    final url = Uri.parse('${ApiConstants.baseUrl}/api/users/loginuser');
     final response = await http.post(
       url,
       body: jsonEncode({

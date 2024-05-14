@@ -1,3 +1,5 @@
+import 'package:event_app_mobile/pages/student/stud_forgotpassword.dart';
+import 'package:event_app_mobile/pages/student/studentmenu.dart';
 import 'package:event_app_mobile/services/studentServices.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -92,6 +94,16 @@ class _StudentLoginState extends State<StudentLogin> {
                 ),
               ),
             ),
+            SizedBox(height: 10), // Add some space between Login button and Forgot Password button
+            TextButton(
+              onPressed: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>StudForgotPassword()));
+              },
+              child: Text(
+                'Forgot Password?',
+                style: TextStyle(color: Colors.black),
+              ),
+            )
           ],
         ),
       ),
@@ -112,9 +124,16 @@ class _StudentLoginState extends State<StudentLogin> {
       // Store college_id and token in shared preferences
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setInt('student_id', data['student_id']);
+      prefs.setInt('event_id', data['event_id']);
       prefs.setString('student_token', token);
       print('Student ID: ${data['student_id']}');
+      print('Event ID: ${data['event_id']}');
       print('Student Token: $token');
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => StudMenu()),
+      );
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
