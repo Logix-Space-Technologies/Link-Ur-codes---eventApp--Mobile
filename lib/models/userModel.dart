@@ -55,3 +55,4 @@ class Users {
     "user_delete_status": userDeleteStatus,
   };
 }
+

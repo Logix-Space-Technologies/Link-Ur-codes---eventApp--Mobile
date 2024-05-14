@@ -5,6 +5,7 @@ import 'dart:convert';
 class CollegeLoginService {
   Future<Map<String, dynamic>> login(String email, String password) async {
     final url = Uri.parse('${ApiConstants.baseUrl}api/college/collegeLogin');
+
     final response = await http.post(
       url,
       body: jsonEncode({
@@ -51,6 +52,7 @@ class CollegeLoginService {
     try {
       final response = await http.post(
         Uri.parse('${ApiConstants.baseUrl}/api/college/Viewcollegedetail'),
+
         headers: {
           'Content-Type': 'application/json',
           'collegetoken': collegeToken,

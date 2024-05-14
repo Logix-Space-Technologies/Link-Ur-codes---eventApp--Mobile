@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/collegeService.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'collegelogin.dart';
 
 class ProfilePage extends StatefulWidget {
 
@@ -62,7 +63,8 @@ class _ProfilePageState extends State<ProfilePage> {
               // Display College Name
               Text(
                 _collegeDetails['college_name'] ?? 'College Name',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style:
+                TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10.0),
               // Display College Email
@@ -73,8 +75,33 @@ class _ProfilePageState extends State<ProfilePage> {
               SizedBox(height: 10.0),
               // Display College Phone Number
               Text(
-                _collegeDetails['college_phone'] ?? 'College Phone Number',
+                _collegeDetails['college_phone'] ??
+                    'College Phone Number',
                 style: TextStyle(fontSize: 18),
+              ),
+              SizedBox(height: 20.0),
+              // Button to update profile
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.white
+                ),
+                onPressed: () {
+                  // Add navigation logic for updating profile
+                },
+                child: Text('Update Profile'),
+              ),
+              SizedBox(height: 10.0),
+              // Button to logout
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white
+                ),
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>CollegeLogin()));
+                },
+                child: Text('Logout'),
               ),
             ],
           ),

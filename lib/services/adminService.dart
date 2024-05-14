@@ -3,11 +3,12 @@ import 'package:event_app_mobile/api_constants.dart';
 import 'package:event_app_mobile/models/adminModel.dart';
 import 'package:event_app_mobile/models/publicEventModel.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
 
 
 class AdminService {
-  static const String baseUrl = '${ApiConstants.baseUrl}/api/admin'; // Update with your API base URL
 
+  static const String baseUrl = '${ApiConstants.baseUrl}/api/admin'; // Update with your API base URL
   static Future<Map<String, dynamic>> loginAdmin(String username, String password) async {
     final url = Uri.parse('$baseUrl/loginadmin');
     final admin = Admin(adminUsername: username, adminPassword: password);
@@ -84,8 +85,6 @@ class AdminService {
     }
   }
 
-
-
   Future<dynamic> getColleges(String token) async {
     var client = http.Client();
     var apiUrl = Uri.parse("${ApiConstants.baseUrl}/api/college/Viewcollege");
@@ -130,6 +129,7 @@ class AdminService {
     }
   }
 
+
  static Future<List<PublicEvents>> searchPublicEvents(String eventName, String token) async {
     final Uri uri = Uri.parse('${ApiConstants.baseUrl}/api/events/search-public-events');
     try {
@@ -154,3 +154,5 @@ class AdminService {
     }
   }
 }
+
+

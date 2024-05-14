@@ -1,4 +1,5 @@
 import 'package:event_app_mobile/models/privateEventModel.dart';
+import 'package:event_app_mobile/pages/admin/addPrivateEvent.dart';
 import 'package:event_app_mobile/services/adminService.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,6 +13,7 @@ class PrivateEventPage extends StatefulWidget {
 
 class _PrivateEventPageState extends State<PrivateEventPage> {
   late Future<List<PrivateEvents>> privateEvents;
+  String searchQuery = "";
 
   @override
   void initState() {
@@ -24,6 +26,11 @@ class _PrivateEventPageState extends State<PrivateEventPage> {
     String adminToken = prefs.getString("admintoken") ?? "";
     try {
       var response = await AdminService().getPrivateEvents(adminToken);
+      if (searchQuery.isNotEmpty) {
+        return response.map<PrivateEvents>((item) => PrivateEvents.fromJson(item))
+            .where((item) => item.eventPrivateName.toLowerCase().contains(searchQuery.toLowerCase()))
+            .toList();
+      }
       return response.map<PrivateEvents>((item) => PrivateEvents.fromJson(item)).toList();
     } catch (e) {
       print("Error fetching private events: $e");
@@ -31,11 +38,36 @@ class _PrivateEventPageState extends State<PrivateEventPage> {
     }
   }
 
+  void updateSearchQuery(String newQuery) {
+    setState(() {
+      searchQuery = newQuery;
+      privateEvents = loadPrivateEvents();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Private Events"),
+        toolbarHeight: 80,
+        backgroundColor: Colors.white,
+        title: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: "Search Private Events...",
+                  border: InputBorder.none,
+                ),
+                onChanged: updateSearchQuery,
+              ),
+            ),
+            IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () => updateSearchQuery(searchQuery),
+            )
+          ],
+        ),
       ),
       body: FutureBuilder<List<PrivateEvents>>(
         future: privateEvents,
@@ -51,11 +83,20 @@ class _PrivateEventPageState extends State<PrivateEventPage> {
                 PrivateEvents event = snapshot.data![index];
                 return Card(
                   child: ListTile(
-                    leading: CircleAvatar(
-                      child: Text(event.eventPrivateImage),
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(50),
+                      child: Image.network(event.eventPrivateImage),
                     ),
                     title: Text(event.eventPrivateName),
                     subtitle: Text("Name: ${event.eventPrivateName}\nAmount: ${event.eventPrivateAmount}\nDescription: ${event.eventPrivateDescription}\nDate: ${event.eventPrivateDate}"),
+                    trailing: IconButton(
+                      icon: Icon(Icons.edit),
+                      onPressed: () {
+                        // Add action here that should be performed when the edit button is pressed
+                        // For example: Navigate to a different screen to edit the event
+                        print('Edit button pressed');
+                      },
+                    ),
                   ),
                 );
               },
@@ -64,6 +105,15 @@ class _PrivateEventPageState extends State<PrivateEventPage> {
             return Center(child: Text("No data available"));
           }
         },
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => AddPrivateEvent()));
+        },
+        label: Text("Add Event"),
+        icon: Icon(Icons.add),
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
       ),
     );
   }
