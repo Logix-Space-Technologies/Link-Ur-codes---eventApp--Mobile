@@ -2,6 +2,9 @@ import 'dart:convert';
 import 'package:event_app_mobile/api_constants.dart';
 import 'package:event_app_mobile/models/publicEventModel.dart';
 import 'package:http/http.dart'as http;
+import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http_parser/http_parser.dart'; // Import for MediaType
 
 class userApiService {
   Future<Map<String, dynamic>> loginApi(String email, String password) async {
@@ -50,7 +53,8 @@ class userApiService {
 
   Future<dynamic> getPublicEvents(String token) async {
     var client = http.Client();
-    var apiUrl = Uri.parse("${ApiConstants.baseUrl}/api/events/user_view_public_events");
+    var apiUrl = Uri.parse(
+        "${ApiConstants.baseUrl}/api/events/view_user_public_events");
     try {
       var response = await client.post(
         apiUrl,
@@ -63,15 +67,18 @@ class userApiService {
         return json.decode(response.body);
       } else {
         // Improved error message for debugging
-        throw Exception('Failed to search. Status code: ${response.statusCode}. Response body: ${response.body}');
+        throw Exception('Failed to search. Status code: ${response
+            .statusCode}. Response body: ${response.body}');
       }
     } finally {
       client.close();
     }
   }
 
-  static Future<List<PublicEvents>> searchPublicEvents(String eventName, String token) async {
-    final Uri uri = Uri.parse('${ApiConstants.baseUrl}/api/events/search-user_public-events');
+  static Future<List<PublicEvents>> searchPublicEvents(String eventName,
+      String token) async {
+    final Uri uri = Uri.parse(
+        '${ApiConstants.baseUrl}/api/events/search-user_public-events');
     try {
       final response = await http.post(
         uri,
@@ -84,13 +91,71 @@ class userApiService {
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
-        List<PublicEvents> events = data.map((e) => PublicEvents.fromJson(e)).toList();
+        List<PublicEvents> events = data.map((e) => PublicEvents.fromJson(e))
+            .toList();
         return events;
       } else {
         throw Exception('Failed to load public events');
       }
     } catch (e) {
       throw Exception('Failed to connect to the server: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>> getUserProfile() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('user_token');
+
+    if (token == null) {
+      throw Exception('Token not found');
+    }
+
+    final response = await http.post(
+      Uri.parse('${ApiConstants.baseUrl}/api/users/view-user-profile'),
+      headers: {
+        'Content-Type': 'application/json',
+        'token': token,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to load user profile');
+    }
+  }
+
+  Future<Map<String, dynamic>> signup(
+      String name,
+      String email,
+      String password,
+      String contactNo,
+      String qualification,
+      String skills,
+      File imageFile) async {
+
+    final url = Uri.parse('${ApiConstants.baseUrl}/api/users/signup');
+
+    var request = http.MultipartRequest('POST', url)
+      ..fields['user_name'] = name
+      ..fields['user_email'] = email
+      ..fields['user_password'] = password
+      ..fields['user_contact_no'] = contactNo
+      ..fields['user_qualification'] = qualification
+      ..fields['user_skills'] = skills
+      ..files.add(await http.MultipartFile.fromPath(
+        'image',
+        imageFile.path,
+        contentType: MediaType('image', 'jpeg'), // adjust based on image type
+      ));
+
+    var response = await request.send();
+
+    if (response.statusCode == 200) {
+      final responseData = await response.stream.bytesToString();
+      return json.decode(responseData);
+    } else {
+      throw Exception('Failed to signup user');
     }
   }
 }

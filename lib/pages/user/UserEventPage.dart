@@ -1,5 +1,5 @@
 import 'package:event_app_mobile/models/publicEventModel.dart';
-import 'package:event_app_mobile/services/adminService.dart';
+import 'package:event_app_mobile/pages/user/userHomePage.dart';
 import 'package:event_app_mobile/services/userService.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -101,7 +101,7 @@ class _UserEventPageState extends State<UserEventPage> {
             Text('Events',style: TextStyle(color:  Color(0xFFFFFFFF),fontWeight: FontWeight.bold),),
           ],
         ),
-        leading: IconButton(onPressed: (){Navigator.pop(context);}, icon:Icon(Icons.arrow_back_ios_new,color:  Color(
+        leading: IconButton(onPressed: (){ Navigator.push(context, MaterialPageRoute(builder: (context)=>UserMenu()));}, icon:Icon(Icons.arrow_back_ios_new,color:  Color(
             0xFFFFFFFF),)),
       ),
       body: Column(
