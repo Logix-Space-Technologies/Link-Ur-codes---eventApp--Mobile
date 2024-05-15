@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'package:event_app_mobile/api_constants.dart';
 import 'package:event_app_mobile/models/publicEventModel.dart';
 import 'package:http/http.dart'as http;
+import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http_parser/http_parser.dart'; // Import for MediaType
 
 class userApiService {
   Future<Map<String, dynamic>> loginApi(String email, String password) async {
@@ -120,6 +122,40 @@ class userApiService {
       return json.decode(response.body);
     } else {
       throw Exception('Failed to load user profile');
+    }
+  }
+
+  Future<Map<String, dynamic>> signup(
+      String name,
+      String email,
+      String password,
+      String contactNo,
+      String qualification,
+      String skills,
+      File imageFile) async {
+
+    final url = Uri.parse('${ApiConstants.baseUrl}/api/users/signup');
+
+    var request = http.MultipartRequest('POST', url)
+      ..fields['user_name'] = name
+      ..fields['user_email'] = email
+      ..fields['user_password'] = password
+      ..fields['user_contact_no'] = contactNo
+      ..fields['user_qualification'] = qualification
+      ..fields['user_skills'] = skills
+      ..files.add(await http.MultipartFile.fromPath(
+        'image',
+        imageFile.path,
+        contentType: MediaType('image', 'jpeg'), // adjust based on image type
+      ));
+
+    var response = await request.send();
+
+    if (response.statusCode == 200) {
+      final responseData = await response.stream.bytesToString();
+      return json.decode(responseData);
+    } else {
+      throw Exception('Failed to signup user');
     }
   }
 }
