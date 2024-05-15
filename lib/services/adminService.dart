@@ -26,21 +26,6 @@ class AdminService {
     }
   }
 
-  // Future<List<PublicEvents>> getPublicEvents() async
-  // {
-  //   var client = http.Client();
-  //   var apiUrl=Uri.parse("http://192.168.1.8:8085/api/events/view_public_events");
-  //   var response=await client.get(apiUrl);
-  //   if(response.statusCode==200)
-  //   {
-  //     return publicEventsFromJson(response.body);
-  //   }
-  //   else
-  //   {
-  //     return [];
-  //   }
-  // }
-
   Future<dynamic> getPublicEvents(String token) async {
     var client = http.Client();
     var apiUrl = Uri.parse("${ApiConstants.baseUrl}/api/events/view_public_events");

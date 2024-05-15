@@ -79,6 +79,7 @@ class _AdminUserPageState extends State<AdminUserPage> {
                     title: Text(user.userName),
                     subtitle: Text(
                         "Email: ${user.userEmail}\nPhone: ${user.userContactNo}\nQualification: ${user.userQualification}\nSkills: ${user.userSkills}"),
+
                   ),
                 );
               },

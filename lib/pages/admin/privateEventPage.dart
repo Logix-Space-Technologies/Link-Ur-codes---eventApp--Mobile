@@ -85,7 +85,7 @@ class _PrivateEventPageState extends State<PrivateEventPage> {
                   child: ListTile(
                     leading: ClipRRect(
                       borderRadius: BorderRadius.circular(50),
-                      child: Image.network(event.eventPrivateImage),
+                      // child: Image.network(event.eventPrivateImage),
                     ),
                     title: Text(event.eventPrivateName),
                     subtitle: Text("Name: ${event.eventPrivateName}\nAmount: ${event.eventPrivateAmount}\nDescription: ${event.eventPrivateDescription}\nDate: ${event.eventPrivateDate}"),
