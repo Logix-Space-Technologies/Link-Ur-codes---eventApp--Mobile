@@ -4,7 +4,7 @@ import 'dart:convert';
 
 class CollegeLoginService {
   Future<Map<String, dynamic>> login(String email, String password) async {
-    final url = Uri.parse('${ApiConstants.baseUrl}api/college/collegeLogin');
+    final url = Uri.parse('${ApiConstants.baseUrl}/api/college/collegeLogin');
 
     final response = await http.post(
       url,
