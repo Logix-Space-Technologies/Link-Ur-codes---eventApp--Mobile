@@ -1,8 +1,7 @@
-import 'dart:convert';
 import 'dart:io';
+import 'package:event_app_mobile/services/userService.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:http/http.dart' as http;
 
 class UserRegisterPage extends StatefulWidget {
   @override
@@ -10,123 +9,109 @@ class UserRegisterPage extends StatefulWidget {
 }
 
 class _UserRegisterPageState extends State<UserRegisterPage> {
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _contactNoController = TextEditingController();
-  final TextEditingController _qualificationController = TextEditingController();
-  final TextEditingController _skillsController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _contactController = TextEditingController();
+  final _qualificationController = TextEditingController();
+  final _skillsController = TextEditingController();
+  File? _imageFile;
 
-  File? _image;
-  final picker = ImagePicker();
+  final ImagePicker _picker = ImagePicker();
 
-  Future getImage() async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
 
-    setState(() {
-      if (pickedFile != null) {
-        _image = File(pickedFile.path);
-      } else {
-        print('No image selected.');
-      }
-    });
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+    }
   }
 
-  Future<void> _signUp() async {
-    final String name = _nameController.text.trim();
-    final String email = _emailController.text.trim();
-    final String password = _passwordController.text.trim();
-    final String contactNo = _contactNoController.text.trim();
-    final String qualification = _qualificationController.text.trim();
-    final String skills = _skillsController.text.trim();
-
-    final response = await http.post(
-      Uri.parse('http://localhost:8085/api/users/signup'),
-      body: jsonEncode({
-        'user_name': name,
-        'user_email': email,
-        'user_password': password,
-        'user_contact_no': contactNo,
-        'user_qualification': qualification,
-        'user_skills': skills,
-        // Convert image to base64 string before sending
-        'user_image': _image != null ? base64Encode(_image!.readAsBytesSync()) : null,
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Registration successful!'),
-          backgroundColor: Colors.green,
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to register'),
-          backgroundColor: Colors.red,
-        ),
-      );
+  Future<void> _signup() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        final apiService = userApiService(); // Correctly instantiate the service
+        final response = await apiService.signup(
+          _nameController.text,
+          _emailController.text,
+          _passwordController.text,
+          _contactController.text,
+          _qualificationController.text,
+          _skillsController.text,
+          _imageFile!,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response['message'])),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Signup failed: $e')),
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Register'),
-      ),
+      appBar: AppBar(title: Text('Signup')),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-            TextField(
-              controller: _nameController,
-              decoration: InputDecoration(labelText: 'Name'),
-            ),
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(labelText: 'Email'),
-            ),
-            TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Password'),
-              obscureText: true,
-            ),
-            TextField(
-              controller: _contactNoController,
-              decoration: InputDecoration(labelText: 'Contact Number'),
-            ),
-            TextField(
-              controller: _qualificationController,
-              decoration: InputDecoration(labelText: 'Qualification'),
-            ),
-            TextField(
-              controller: _skillsController,
-              decoration: InputDecoration(labelText: 'Skills'),
-            ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: getImage,
-              child: Text('Pick Image'),
-            ),
-            SizedBox(height: 16),
-            _image != null
-                ? Image.asset(_image!.path) // Display picked image
-                : Container(),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _signUp,
-              child: Text('Sign Up'),
-            ),
-          ],
+        padding: EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              TextFormField(
+                controller: _nameController,
+                decoration: InputDecoration(labelText: 'Name'),
+                validator: (value) => value!.isEmpty ? 'Please enter your name' : null,
+              ),
+              TextFormField(
+                controller: _emailController,
+                decoration: InputDecoration(labelText: 'Email'),
+                validator: (value) => value!.isEmpty ? 'Please enter your email' : null,
+              ),
+              TextFormField(
+                controller: _passwordController,
+                decoration: InputDecoration(labelText: 'Password'),
+                obscureText: true,
+                validator: (value) => value!.isEmpty ? 'Please enter your password' : null,
+              ),
+              TextFormField(
+                controller: _contactController,
+                decoration: InputDecoration(labelText: 'Contact No'),
+                validator: (value) => value!.isEmpty ? 'Please enter your contact number' : null,
+              ),
+              TextFormField(
+                controller: _qualificationController,
+                decoration: InputDecoration(labelText: 'Qualification'),
+                validator: (value) => value!.isEmpty ? 'Please enter your qualification' : null,
+              ),
+              TextFormField(
+                controller: _skillsController,
+                decoration: InputDecoration(labelText: 'Skills'),
+                validator: (value) => value!.isEmpty ? 'Please enter your skills' : null,
+              ),
+              SizedBox(height: 10),
+              _imageFile == null
+                  ? Text('No image selected.')
+                  : Image.file(_imageFile!),
+              TextButton(
+                onPressed: _pickImage,
+                child: Text('Select Image'),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _signup,
+                child: Text('Signup'),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
-

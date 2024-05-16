@@ -1,4 +1,5 @@
 import 'package:event_app_mobile/pages/college/profilePage.dart';
+import 'package:event_app_mobile/pages/college/studentDetails.dart';
 import 'package:flutter/material.dart';
 
 class CollegeMenu extends StatefulWidget {
@@ -54,19 +55,6 @@ class _CollegeMenuState extends State<CollegeMenu> {
         unselectedItemColor: Colors.grey,
         selectedItemColor: Colors.black,
         onTap: _onItemTapped,
-      ),
-    );
-  }
-}
-
-
-class StudentDetailsPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'Student Details Page',
-        style: TextStyle(fontSize: 20),
       ),
     );
   }
