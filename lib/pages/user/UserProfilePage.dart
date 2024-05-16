@@ -1,3 +1,4 @@
+import 'package:event_app_mobile/api_constants.dart';
 import 'package:event_app_mobile/services/userService.dart';
 import 'package:flutter/material.dart';
 
@@ -53,7 +54,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             return Center(child: Text('No data found'));
           } else {
             var user = snapshot.data!;
-            String imageUrl = 'http://localhost:8085/${user['image']}';
+            String imageUrl = '${ApiConstants.baseUrl}/${user['image']}';
             return Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
