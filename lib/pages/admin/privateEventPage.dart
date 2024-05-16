@@ -1,3 +1,4 @@
+import 'package:event_app_mobile/api_constants.dart';
 import 'package:event_app_mobile/models/privateEventModel.dart';
 import 'package:event_app_mobile/pages/admin/addPrivateEvent.dart';
 import 'package:event_app_mobile/services/adminService.dart';
@@ -81,14 +82,29 @@ class _PrivateEventPageState extends State<PrivateEventPage> {
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
                 PrivateEvents event = snapshot.data![index];
+                // Assume ApiConstants.baseUrl contains the base URL of your API
+                String imageUrl = '${ApiConstants.baseUrl}/${event.eventPrivateImage}';
                 return Card(
                   child: ListTile(
                     leading: ClipRRect(
                       borderRadius: BorderRadius.circular(50),
-                      // child: Image.network(event.eventPrivateImage),
+                      child: Image.network(
+                        imageUrl,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Icon(Icons.broken_image);
+                        },
+                        fit: BoxFit.cover,
+                        width: 50,
+                        height: 50,
+                      ),
                     ),
                     title: Text(event.eventPrivateName),
-                    subtitle: Text("Name: ${event.eventPrivateName}\nAmount: ${event.eventPrivateAmount}\nDescription: ${event.eventPrivateDescription}\nDate: ${event.eventPrivateDate}"),
+                    subtitle: Text(
+                        "Name: ${event.eventPrivateName}\n"
+                            "Amount: ${event.eventPrivateAmount}\n"
+                            "Description: ${event.eventPrivateDescription}\n"
+                            "Date: ${event.eventPrivateDate}"
+                    ),
                     trailing: IconButton(
                       icon: Icon(Icons.edit),
                       onPressed: () {
