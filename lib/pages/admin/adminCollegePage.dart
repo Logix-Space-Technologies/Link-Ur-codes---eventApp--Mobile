@@ -1,4 +1,5 @@
 import 'package:event_app_mobile/models/adminCollege.dart';
+import 'package:event_app_mobile/pages/admin/EditCollegeAdmin.dart';
 import 'package:event_app_mobile/pages/admin/addCollegePage.dart';
 import 'package:event_app_mobile/services/adminService.dart';
 import 'package:flutter/material.dart';
@@ -90,6 +91,9 @@ class _AdminCollegePageState extends State<AdminCollegePage> {
                       onPressed: () async {
                         print('Edit button pressed for: ${college.collegeId}');
                         await _saveToPreferences(college.collegeId.toString());
+                        Navigator.push(context,
+                            MaterialPageRoute(builder:
+                            (context)=>EditCollege()));
                       },
                     ),
                   ),

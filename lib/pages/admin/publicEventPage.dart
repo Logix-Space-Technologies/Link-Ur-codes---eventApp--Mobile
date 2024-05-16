@@ -78,9 +78,10 @@ class _PublicEventPageState extends State<PublicEventPage> {
                 PublicEvents event = snapshot.data![index];
                 return Card(
                   child: ListTile(
-                    leading: CircleAvatar(
-                      child: Text(event.eventPublicName[0]),
-                    ),
+                      leading: ClipRRect(
+                        borderRadius: BorderRadius.circular(50),
+                        // child: Image.network(event.eventPublicImage),
+                      ),
                     subtitle: Text("Name: ${event.eventPublicName}\nVenue: ${event.eventVenue}\nAmount: ${event.eventPublicAmount}\nDescription: ${event.eventPublicDescription}\nDate: ${event.eventPublicDate}"),
                     trailing: IconButton(
                       icon: Icon(Icons.edit),
