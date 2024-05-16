@@ -53,7 +53,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             return Center(child: Text('No data found'));
           } else {
             var user = snapshot.data!;
-            String imageUrl = 'http://localhost:8085/${user['image']}';
+            String imageUrl = 'http://192.168.1.5:8085/${user['image']}';
             return Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
