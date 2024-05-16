@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:event_app_mobile/pages/user/userlogin.dart';
 import 'package:event_app_mobile/services/userService.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -43,9 +44,7 @@ class _UserRegisterPageState extends State<UserRegisterPage> {
           _skillsController.text,
           _imageFile!,
         );
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(response['message'])),
-        );
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>UserLogin()));
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Signup failed: $e')),

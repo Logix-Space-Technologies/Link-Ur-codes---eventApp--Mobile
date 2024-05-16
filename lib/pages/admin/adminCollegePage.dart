@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AdminCollegePage extends StatefulWidget {
-  const AdminCollegePage({super.key});
+  const AdminCollegePage({Key? key}) : super(key: key);
 
   @override
   State<AdminCollegePage> createState() => _AdminCollegePageState();
@@ -93,7 +93,7 @@ class _AdminCollegePageState extends State<AdminCollegePage> {
                         await _saveToPreferences(college.collegeId.toString());
                         Navigator.push(context,
                             MaterialPageRoute(builder:
-                            (context)=>EditCollege()));
+                                (context)=>EditCollege()));
                       },
                     ),
                   ),
