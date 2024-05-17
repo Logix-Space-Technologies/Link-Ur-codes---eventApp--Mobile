@@ -50,7 +50,19 @@ class _AddPrivateEventState extends State<AddPrivateEvent> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(title: Text('Add Private Event')),
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white,
+          title: Text('Add Private Event'),
+          leading: IconButton(
+            onPressed: () {
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              }
+            },
+            icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+          ),
+        ),
         body: Container(
           padding: EdgeInsets.all(20),
           child: Column(

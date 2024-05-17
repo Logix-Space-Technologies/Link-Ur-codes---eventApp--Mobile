@@ -1,3 +1,4 @@
+import 'package:event_app_mobile/api_constants.dart';
 import 'package:event_app_mobile/models/userModel.dart';
 import 'package:event_app_mobile/services/adminService.dart';
 import 'package:flutter/material.dart';
@@ -71,11 +72,25 @@ class _AdminUserPageState extends State<AdminUserPage> {
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
                 Users user = snapshot.data![index];
+                String imageUrl = '${ApiConstants.baseUrl}/${user.userImage}';
                 return Card(
                   child: ListTile(
                     // leading: CircleAvatar(
                     //   backgroundImage: NetworkImage(user.userImage), // Use backgroundImage for loading network images
                     // ),
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(50),
+                      child: Image.network(
+                        imageUrl,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Icon(Icons.broken_image);
+                          // String imageUrl = '${ApiConstants.baseUrl}/${event.eventPrivateImage}';
+                        },
+                        fit: BoxFit.cover,
+                        width: 50,
+                        height: 50,
+                      ),
+                    ),
                     title: Text(user.userName),
                     subtitle: Text(
                         "Email: ${user.userEmail}\nPhone: ${user.userContactNo}\nQualification: ${user.userQualification}\nSkills: ${user.userSkills}"),

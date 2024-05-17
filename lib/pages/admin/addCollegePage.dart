@@ -12,7 +12,19 @@ class _AddCollegeState extends State<AddCollege> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white,
+          title: Text('Add College'),
+          leading: IconButton(
+            onPressed: () {
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              }
+            },
+            icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+          ),
+        ),
         body: Container(),
       ),
     );
