@@ -1,3 +1,4 @@
+import 'package:event_app_mobile/api_constants.dart';
 import 'package:event_app_mobile/models/adminCollege.dart';
 import 'package:event_app_mobile/pages/admin/EditCollegeAdmin.dart';
 import 'package:event_app_mobile/pages/admin/addCollegePage.dart';
@@ -13,6 +14,7 @@ class AdminCollegePage extends StatefulWidget {
 }
 
 class _AdminCollegePageState extends State<AdminCollegePage> {
+  TextEditingController _searchController = TextEditingController();
   late Future<List<Colleges>> colleges;
 
   @override
@@ -39,6 +41,55 @@ class _AdminCollegePageState extends State<AdminCollegePage> {
     print('Saved $collegeIdAdmin to SharedPreferences');
   }
 
+  Future<void> _searchEvents(String collegeName) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String admintoken = prefs.getString("admintoken") ?? "";
+    try {
+      var searchResults = await AdminService.searchColleges(collegeName, admintoken);
+      if (searchResults != null) {
+        setState(() {
+          colleges = Future.value(searchResults);
+        });
+      } else {
+        // Display an error message indicating no data was found
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('No Data Found'),
+            content: Text('No events matching the search criteria were found.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+    } catch (e) {
+      print("Error searching events: $e");
+      // Display an error message indicating search failed
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text('An error occurred while searching events.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,14 +99,24 @@ class _AdminCollegePageState extends State<AdminCollegePage> {
         title: Row(
           children: [
             Expanded(
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: "Search colleges...",
-                  border: InputBorder.none,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: "Search Colleges",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(vertical: 3),
+                  ),
+                  onSubmitted: (collegeName) {
+                    collegeName = collegeName.trim();
+                    if (collegeName.isNotEmpty) {
+                      _searchEvents(collegeName);
+                    }
+                  },
                 ),
-                onChanged: (value) {
-                  // Implement search logic
-                },
               ),
             ),
             IconButton(
@@ -79,10 +140,21 @@ class _AdminCollegePageState extends State<AdminCollegePage> {
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
                 Colleges college = snapshot.data![index];
+                String imageUrl = '${ApiConstants.baseUrl}/${college.collegeImage}';
                 return Card(
                   child: ListTile(
-                    leading: CircleAvatar(
-                      child: Text(college.collegeName[0]),
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(50),
+                      child: Image.network(
+                        imageUrl,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Icon(Icons.broken_image);
+                          // String imageUrl = '${ApiConstants.baseUrl}/${event.eventPrivateImage}';
+                        },
+                        fit: BoxFit.cover,
+                        width: 50,
+                        height: 50,
+                      ),
                     ),
                     title: Text(college.collegeName),
                     subtitle: Text("Email: ${college.collegeEmail}\nPhone: ${college.collegePhone}"),
