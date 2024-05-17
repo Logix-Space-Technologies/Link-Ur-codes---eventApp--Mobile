@@ -12,13 +12,15 @@ class Colleges {
   int collegeId;
   String collegeName;
   String collegeEmail;
-  String collegePhone;
+  int collegePhone;
   String collegePassword;
-  dynamic collegeImage;
+  String? collegeImage;
   int collegeCertificateRequest;
   int deleteStatus;
   int collegeAddedby;
   int collegeUpdatedby;
+  DateTime collegeAddedDate;
+  DateTime collegeUpdatedDate;
 
   Colleges({
     required this.collegeId,
@@ -31,6 +33,8 @@ class Colleges {
     required this.deleteStatus,
     required this.collegeAddedby,
     required this.collegeUpdatedby,
+    required this.collegeAddedDate,
+    required this.collegeUpdatedDate,
   });
 
   factory Colleges.fromJson(Map<String, dynamic> json) => Colleges(
@@ -44,6 +48,8 @@ class Colleges {
     deleteStatus: json["delete_status"],
     collegeAddedby: json["college_addedby"],
     collegeUpdatedby: json["college_updatedby"],
+    collegeAddedDate: DateTime.parse(json["college_added_date"]),
+    collegeUpdatedDate: DateTime.parse(json["college_updated_date"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -57,5 +63,7 @@ class Colleges {
     "delete_status": deleteStatus,
     "college_addedby": collegeAddedby,
     "college_updatedby": collegeUpdatedby,
+    "college_added_date": collegeAddedDate.toIso8601String(),
+    "college_updated_date": collegeUpdatedDate.toIso8601String(),
   };
 }

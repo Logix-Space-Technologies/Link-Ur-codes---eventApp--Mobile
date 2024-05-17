@@ -136,12 +136,12 @@ class _UserLoginState extends State<UserLogin> {
       print('User ID: ${data['user_id']}');
       print('User Token: $token');
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(response['message']),
-          backgroundColor: Colors.green,
-        ),
-      );
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     content: Text(response['message']),
+      //     backgroundColor: Colors.green,
+      //   ),
+      // );
       Navigator.push(context, MaterialPageRoute(builder: (context)=>UserMenu()));
     }
     else {

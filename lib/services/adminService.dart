@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:event_app_mobile/api_constants.dart';
+import 'package:event_app_mobile/models/adminCollege.dart';
 import 'package:event_app_mobile/models/adminModel.dart';
 import 'package:event_app_mobile/models/publicEventModel.dart';
 import 'package:http/http.dart' as http;
@@ -114,8 +115,32 @@ class AdminService {
     }
   }
 
+  // static Future<List<Colleges>> searchColleges(String collegeName, String token) async {
+  //   final Uri uri = Uri.parse('${ApiConstants.baseUrl}/api/college/searchCollege');
+  //   try {
+  //     final response = await http.post(
+  //       uri,
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'token': token,
+  //       },
+  //       body: jsonEncode({'term': collegeName}),
+  //     );
+  //
+  //     if (response.statusCode == 200) {
+  //       final List<dynamic> data = jsonDecode(response.body);
+  //       List<Colleges> colleges = data.map((e) => Colleges.fromJson(e)).toList();
+  //       return colleges;
+  //     } else {
+  //       throw Exception('Failed to load colleges');
+  //     }
+  //   } catch (e) {
+  //     throw Exception('Failed to connect to the server: $e');
+  //   }
+  // }
 
- static Future<List<PublicEvents>> searchPublicEvents(String eventName, String token) async {
+
+  static Future<List<PublicEvents>> searchPublicEvents(String eventName, String token) async {
     final Uri uri = Uri.parse('${ApiConstants.baseUrl}/api/events/search-public-events');
     try {
       final response = await http.post(

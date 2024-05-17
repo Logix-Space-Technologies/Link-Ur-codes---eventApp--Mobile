@@ -1,3 +1,4 @@
+import 'package:event_app_mobile/api_constants.dart';
 import 'package:event_app_mobile/models/publicEventModel.dart';
 import 'package:event_app_mobile/pages/admin/addPublicEvent.dart';
 import 'package:event_app_mobile/services/adminService.dart';
@@ -76,12 +77,22 @@ class _PublicEventPageState extends State<PublicEventPage> {
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
                 PublicEvents event = snapshot.data![index];
+                String imageUrl = '${ApiConstants.baseUrl}/${event.eventPublicImage}';
                 return Card(
                   child: ListTile(
-                      leading: ClipRRect(
-                        borderRadius: BorderRadius.circular(50),
-                        // child: Image.network(event.eventPublicImage),
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(50),
+                      child: Image.network(
+                        imageUrl,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Icon(Icons.broken_image);
+                          // String imageUrl = '${ApiConstants.baseUrl}/${event.eventPrivateImage}';
+                        },
+                        fit: BoxFit.cover,
+                        width: 50,
+                        height: 50,
                       ),
+                    ),
                     subtitle: Text("Name: ${event.eventPublicName}\nVenue: ${event.eventVenue}\nAmount: ${event.eventPublicAmount}\nDescription: ${event.eventPublicDescription}\nDate: ${event.eventPublicDate}"),
                     trailing: IconButton(
                       icon: Icon(Icons.edit),

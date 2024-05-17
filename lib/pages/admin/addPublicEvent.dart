@@ -12,7 +12,19 @@ class _AddPublicEventState extends State<AddPublicEvent> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white,
+          title: Text('Add Public Event'),
+          leading: IconButton(
+            onPressed: () {
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              }
+            },
+            icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+          ),
+        ),
         body: Container()
       ),
     );

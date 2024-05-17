@@ -92,6 +92,7 @@ class _PrivateEventPageState extends State<PrivateEventPage> {
                         imageUrl,
                         errorBuilder: (context, error, stackTrace) {
                           return Icon(Icons.broken_image);
+                          // String imageUrl = '${ApiConstants.baseUrl}/${event.eventPrivateImage}';
                         },
                         fit: BoxFit.cover,
                         width: 50,
