@@ -1,5 +1,6 @@
 import 'package:event_app_mobile/models/publicEventModel.dart';
 import 'package:event_app_mobile/pages/user/userHomePage.dart';
+import 'package:event_app_mobile/services/adminService.dart';
 import 'package:event_app_mobile/services/userService.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -44,7 +45,7 @@ class _UserEventPageState extends State<UserEventPage> {
     String user_token = prefs.getString("user_token") ?? "";
     try {
       var searchResults = await userApiService.searchPublicEvents(eventName, user_token);
-      if (searchResults != null) {
+      if (searchResults != null && searchResults.isNotEmpty) {
         setState(() {
           publicEvents = Future.value(searchResults);
         });
@@ -59,6 +60,10 @@ class _UserEventPageState extends State<UserEventPage> {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
+                  // Reload the original events list
+                  setState(() {
+                    publicEvents = loadPublicEvents();
+                  });
                 },
                 child: Text('OK'),
               ),
@@ -86,6 +91,7 @@ class _UserEventPageState extends State<UserEventPage> {
       );
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
