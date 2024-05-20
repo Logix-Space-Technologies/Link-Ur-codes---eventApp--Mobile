@@ -127,7 +127,6 @@ class AdminService {
         },
         body: jsonEncode({'term': collegeName}),
       );
-
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
