@@ -29,6 +29,7 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
   PageController _pageController = PageController();
   File? _selectedFile;
   late String _collegeToken;
+  late String studentCollegeId;
 
   @override
   void initState() {
@@ -104,9 +105,12 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
   Future<void> _loadCollegeToken() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('college_token');
+    final int studentCollegeIdInt = prefs.getInt('college_id') ?? 0; // Default value is 0
+    final String _studentCollegeId = studentCollegeIdInt.toString();
     if (token != null) {
       setState(() {
         _collegeToken = token;
+        studentCollegeId = _studentCollegeId;
       });
     } else {
       // Handle the case when the token is not found in SharedPreferences
@@ -132,11 +136,12 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
     }
   }
 
-  Future<void> _uploadStudents(File file, String collegeToken) async {
+  Future<void> _uploadStudents(File file, String collegeToken , String studentCollegeId ) async {
     try {
       final url = Uri.parse('${ApiConstants.baseUrl}/api/college/studentupload');
       final request = http.MultipartRequest('POST', url)
-        ..headers['collegetoken'] = '$collegeToken' // Add the college token as a header
+        ..headers['collegetoken'] = '$collegeToken'
+        ..fields['college_id'] = studentCollegeId// Add the college token as a header
         ..files.add(await http.MultipartFile.fromPath('file', file.path));
 
       final streamedResponse = await request.send();
@@ -225,7 +230,7 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
                 ElevatedButton(
                   onPressed: () {
                     if (_selectedFile != null) {
-                      _uploadStudents(_selectedFile!, collegeToken);
+                      _uploadStudents(_selectedFile!, collegeToken, studentCollegeId);
                     }
                   },
                   style: ButtonStyle(
