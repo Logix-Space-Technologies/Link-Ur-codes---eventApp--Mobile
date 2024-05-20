@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final colleges = collegesFromJson(jsonString);
-
 import 'dart:convert';
 
 List<Colleges> collegesFromJson(String str) => List<Colleges>.from(json.decode(str).map((x) => Colleges.fromJson(x)));
@@ -9,18 +5,18 @@ List<Colleges> collegesFromJson(String str) => List<Colleges>.from(json.decode(s
 String collegesToJson(List<Colleges> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class Colleges {
-  int collegeId;
+  int? collegeId;
   String collegeName;
-  String collegeEmail;
-  int collegePhone;
-  String collegePassword;
+  String? collegeEmail;
+  int? collegePhone;
+  String? collegePassword;
   String? collegeImage;
-  int collegeCertificateRequest;
-  int deleteStatus;
-  int collegeAddedby;
-  int collegeUpdatedby;
-  DateTime collegeAddedDate;
-  DateTime collegeUpdatedDate;
+  int? collegeCertificateRequest;
+  int? deleteStatus;
+  int? collegeAddedby;
+  int? collegeUpdatedby;
+  DateTime? collegeAddedDate;
+  DateTime? collegeUpdatedDate;
 
   Colleges({
     required this.collegeId,
@@ -28,7 +24,7 @@ class Colleges {
     required this.collegeEmail,
     required this.collegePhone,
     required this.collegePassword,
-    required this.collegeImage,
+    this.collegeImage,
     required this.collegeCertificateRequest,
     required this.deleteStatus,
     required this.collegeAddedby,
@@ -38,18 +34,18 @@ class Colleges {
   });
 
   factory Colleges.fromJson(Map<String, dynamic> json) => Colleges(
-    collegeId: json["college_id"],
+    collegeId: json["college_id"] != null ? json["college_id"] : 0,
     collegeName: json["college_name"],
     collegeEmail: json["college_email"],
-    collegePhone: json["college_phone"],
+    collegePhone: json["college_phone"] != null ? json["college_phone"] : 0,
     collegePassword: json["college_password"],
     collegeImage: json["college_image"],
-    collegeCertificateRequest: json["college_certificate_request"],
-    deleteStatus: json["delete_status"],
-    collegeAddedby: json["college_addedby"],
-    collegeUpdatedby: json["college_updatedby"],
-    collegeAddedDate: DateTime.parse(json["college_added_date"]),
-    collegeUpdatedDate: DateTime.parse(json["college_updated_date"]),
+    collegeCertificateRequest: json["college_certificate_request"] != null ? json["college_certificate_request"] : 0,
+    deleteStatus: json["delete_status"] != null ? json["delete_status"] : 0,
+    collegeAddedby: json["college_addedby"] != null ? json["college_addedby"] : 0,
+    collegeUpdatedby: json["college_updatedby"] != null ? json["college_updatedby"] : 0,
+    collegeAddedDate: json["college_added_date"] != null ? DateTime.parse(json["college_added_date"]) : DateTime.now(),
+    collegeUpdatedDate: json["college_updated_date"] != null ? DateTime.parse(json["college_updated_date"]) : DateTime.now(),
   );
 
   Map<String, dynamic> toJson() => {
@@ -63,7 +59,7 @@ class Colleges {
     "delete_status": deleteStatus,
     "college_addedby": collegeAddedby,
     "college_updatedby": collegeUpdatedby,
-    "college_added_date": collegeAddedDate.toIso8601String(),
-    "college_updated_date": collegeUpdatedDate.toIso8601String(),
+    "college_added_date": collegeAddedDate?.toIso8601String(),
+    "college_updated_date": collegeUpdatedDate?.toIso8601String(),
   };
 }

@@ -129,8 +129,17 @@ class AdminService {
       );
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-        return data.map((e) => Colleges.fromJson(e)).toList();
+        final data = jsonDecode(response.body);
+
+        if (data is List) {
+          // If the response is a list of maps
+          return data.map((e) => Colleges.fromJson(e as Map<String, dynamic>)).toList();
+        } else if (data is Map) {
+          // If the response is a single map, wrap it in a list and cast it correctly
+          return [Colleges.fromJson(data as Map<String, dynamic>)];
+        } else {
+          throw Exception('Unexpected response format');
+        }
       } else if (response.statusCode == 404) {
         return [];  // No data found
       } else {
@@ -140,8 +149,6 @@ class AdminService {
       throw Exception('Failed to connect to the server: $e');
     }
   }
-
-
 
   static Future<List<PublicEvents>> searchPublicEvents(String eventName, String token) async {
     final Uri uri = Uri.parse('${ApiConstants.baseUrl}/api/events/search-public-events');
@@ -180,9 +187,17 @@ class AdminService {
       );
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-        List<PrivateEvents> events = data.map((e) => PrivateEvents.fromJson(e)).toList();
-        return events;
+        final data = jsonDecode(response.body);
+
+        if (data is List) {
+          // If the response is a list of maps
+          return data.map((e) => PrivateEvents.fromJson(e as Map<String, dynamic>)).toList();
+        } else if (data is Map) {
+          // If the response is a single map, wrap it in a list and cast it correctly
+          return [PrivateEvents.fromJson(data as Map<String, dynamic>)];
+        } else {
+          throw Exception('Unexpected response format');
+        }
       } else {
         throw Exception('Failed to load private events');
       }
