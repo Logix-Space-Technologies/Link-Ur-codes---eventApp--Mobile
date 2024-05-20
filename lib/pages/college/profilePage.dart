@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../api_constants.dart';
 import '../../services/collegeService.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'collegelogin.dart';
@@ -55,8 +56,7 @@ class _ProfilePageState extends State<ProfilePage> {
               // Display College Image
               CircleAvatar(
                 radius: 60,
-                backgroundImage: NetworkImage(
-                    _collegeDetails['college_image'] ?? ''),
+                backgroundImage: NetworkImage('${ApiConstants.baseUrl}/${_collegeDetails['college_image']}'),
                 backgroundColor: Colors.grey[200],
               ),
               SizedBox(height: 20.0),
@@ -75,8 +75,7 @@ class _ProfilePageState extends State<ProfilePage> {
               SizedBox(height: 10.0),
               // Display College Phone Number
               Text(
-                _collegeDetails['college_phone'] ??
-                    'College Phone Number',
+                (_collegeDetails['college_phone']?.toString() ?? 'College Phone Number'),
                 style: TextStyle(fontSize: 18),
               ),
               SizedBox(height: 20.0),

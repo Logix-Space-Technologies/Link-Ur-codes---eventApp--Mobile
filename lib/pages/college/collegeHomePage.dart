@@ -2,6 +2,7 @@ import 'package:event_app_mobile/pages/college/profilePage.dart';
 import 'package:event_app_mobile/pages/college/studentDetails.dart';
 import 'package:flutter/material.dart';
 
+
 class CollegeMenu extends StatefulWidget {
   @override
   _CollegeMenuState createState() => _CollegeMenuState();
@@ -60,17 +61,19 @@ class _CollegeMenuState extends State<CollegeMenu> {
   }
 }
 
+
 class EventsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Text(
-        'Events Page',
+        'Event Page',
         style: TextStyle(fontSize: 20),
       ),
     );
   }
 }
+
 
 class EventHistoryPage extends StatelessWidget {
   @override

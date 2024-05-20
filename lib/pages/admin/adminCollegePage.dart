@@ -41,12 +41,12 @@ class _AdminCollegePageState extends State<AdminCollegePage> {
     print('Saved $collegeIdAdmin to SharedPreferences');
   }
 
-  Future<void> _searchEvents(String collegeName) async {
+  Future<void> _searchCollege(String collegeName) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String admintoken = prefs.getString("admintoken") ?? "";
+    String adminToken = prefs.getString("admintoken") ?? "";
     try {
-      var searchResults = await AdminService.searchColleges(collegeName, admintoken);
-      if (searchResults != null) {
+      var searchResults = await AdminService.searchColleges(collegeName, adminToken);
+      if (searchResults != null && searchResults.isNotEmpty) {
         setState(() {
           colleges = Future.value(searchResults);
         });
@@ -56,11 +56,15 @@ class _AdminCollegePageState extends State<AdminCollegePage> {
           context: context,
           builder: (context) => AlertDialog(
             title: Text('No Data Found'),
-            content: Text('No events matching the search criteria were found.'),
+            content: Text('No colleges matching the search criteria were found.'),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
+                  // Reload the original colleges list
+                  setState(() {
+                    colleges = loadColleges();
+                  });
                 },
                 child: Text('OK'),
               ),
@@ -69,13 +73,13 @@ class _AdminCollegePageState extends State<AdminCollegePage> {
         );
       }
     } catch (e) {
-      print("Error searching events: $e");
+      print("Error searching colleges: $e");
       // Display an error message indicating search failed
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: Text('Error'),
-          content: Text('An error occurred while searching events.'),
+          content: Text('An error occurred while searching colleges.'),
           actions: [
             TextButton(
               onPressed: () {
@@ -88,7 +92,6 @@ class _AdminCollegePageState extends State<AdminCollegePage> {
       );
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -109,20 +112,25 @@ class _AdminCollegePageState extends State<AdminCollegePage> {
                       borderRadius: BorderRadius.circular(5),
                     ),
                     contentPadding: EdgeInsets.symmetric(vertical: 3),
+                    hintStyle: TextStyle(color: Colors.white),  // White hint text
                   ),
                   onSubmitted: (collegeName) {
                     collegeName = collegeName.trim();
                     if (collegeName.isNotEmpty) {
-                      _searchEvents(collegeName);
+                      _searchCollege(collegeName);
                     }
                   },
+                  style: TextStyle(color: Colors.black),  // White input text
                 ),
               ),
             ),
             IconButton(
-              icon: Icon(Icons.search),
+              icon: Icon(Icons.search, color: Colors.black),  // Search icon color
               onPressed: () {
-                // You might want to trigger search based on the text field input
+                String collegeName = _searchController.text.trim();
+                if (collegeName.isNotEmpty) {
+                  _searchCollege(collegeName);
+                }
               },
             )
           ],
@@ -135,7 +143,7 @@ class _AdminCollegePageState extends State<AdminCollegePage> {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text("Error: ${snapshot.error.toString()}"));
-          } else if (snapshot.hasData) {
+          } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
             return ListView.builder(
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
@@ -149,7 +157,6 @@ class _AdminCollegePageState extends State<AdminCollegePage> {
                         imageUrl,
                         errorBuilder: (context, error, stackTrace) {
                           return Icon(Icons.broken_image);
-                          // String imageUrl = '${ApiConstants.baseUrl}/${event.eventPrivateImage}';
                         },
                         fit: BoxFit.cover,
                         width: 50,
@@ -165,7 +172,7 @@ class _AdminCollegePageState extends State<AdminCollegePage> {
                         await _saveToPreferences(college.collegeId.toString());
                         Navigator.push(context,
                             MaterialPageRoute(builder:
-                                (context)=>EditCollege()));
+                                (context) => EditCollege()));
                       },
                     ),
                   ),
@@ -177,15 +184,14 @@ class _AdminCollegePageState extends State<AdminCollegePage> {
           }
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => AddCollege()));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => AddCollege()));
         },
-        label: Text("Add College"),
-        icon: Icon(Icons.add),
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
+        heroTag: "addCollegeFab",
+        child: Icon(Icons.add),
       ),
     );
   }
