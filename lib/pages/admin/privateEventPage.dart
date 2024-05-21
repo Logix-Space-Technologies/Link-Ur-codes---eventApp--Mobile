@@ -86,7 +86,6 @@ class _PrivateEventPageState extends State<PrivateEventPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,7 +96,7 @@ class _PrivateEventPageState extends State<PrivateEventPage> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Search Events',
+                hintText: 'Search Private Events',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5),
                 ),

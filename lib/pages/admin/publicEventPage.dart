@@ -96,7 +96,7 @@ class _PublicEventPageState extends State<PublicEventPage> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Search Events',
+                hintText: 'Search Public Events',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5),
                 ),

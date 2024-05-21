@@ -103,16 +103,27 @@ class _AdminCollegePageState extends State<AdminCollegePage> {
           children: [
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(4.0),
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    hintText: "Search Colleges",
+                    hintText: ' Search Colleges',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
                     ),
                     contentPadding: EdgeInsets.symmetric(vertical: 3),
-                    hintStyle: TextStyle(color: Colors.white),  // White hint text
+                    hintStyle: TextStyle(color: Colors.grey),  // Changed hint text color to grey
+                    filled: true,
+                    fillColor: Colors.white,  // Added background color to contrast with the hint text
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.search, color: Colors.black),  // Search icon color
+                      onPressed: () {
+                        String collegeName = _searchController.text.trim();
+                        if (collegeName.isNotEmpty) {
+                          _searchCollege(collegeName);
+                        }
+                      },
+                    ),
                   ),
                   onSubmitted: (collegeName) {
                     collegeName = collegeName.trim();
@@ -120,19 +131,19 @@ class _AdminCollegePageState extends State<AdminCollegePage> {
                       _searchCollege(collegeName);
                     }
                   },
-                  style: TextStyle(color: Colors.black),  // White input text
+                  style: TextStyle(color: Colors.black),  // Input text color remains black
                 ),
               ),
             ),
-            IconButton(
-              icon: Icon(Icons.search, color: Colors.black),  // Search icon color
-              onPressed: () {
-                String collegeName = _searchController.text.trim();
-                if (collegeName.isNotEmpty) {
-                  _searchCollege(collegeName);
-                }
-              },
-            )
+            // IconButton(
+            //   icon: Icon(Icons.search, color: Colors.black),  // Search icon color
+            //   onPressed: () {
+            //     String collegeName = _searchController.text.trim();
+            //     if (collegeName.isNotEmpty) {
+            //       _searchCollege(collegeName);
+            //     }
+            //   },
+            // )
           ],
         ),
       ),

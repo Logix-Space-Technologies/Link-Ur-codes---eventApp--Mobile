@@ -4,6 +4,7 @@ import 'package:event_app_mobile/models/adminCollege.dart';
 import 'package:event_app_mobile/models/adminModel.dart';
 import 'package:event_app_mobile/models/privateEventModel.dart';
 import 'package:event_app_mobile/models/publicEventModel.dart';
+import 'package:event_app_mobile/models/userModel.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
@@ -199,6 +200,35 @@ class AdminService {
         }
       } else {
         throw Exception('Failed to load private events');
+      }
+    } catch (e) {
+      throw Exception('Failed to connect to the server: $e');
+    }
+  }
+
+  static Future<List<Users>> searchUsers(String userName, String token) async {
+    final Uri uri = Uri.parse('${ApiConstants.baseUrl}/api/users/searchusers');
+    try {
+      final response = await http.post(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'token': token,
+        },
+        body: jsonEncode({'term': userName}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        if (data is List) {
+          // If the response is a list of maps
+          return data.map<Users>((e) => Users.fromJson(e as Map<String, dynamic>)).toList();
+        } else {
+          throw Exception('Unexpected response format');
+        }
+      } else {
+        throw Exception('Failed to load users: ${response.reasonPhrase}');
       }
     } catch (e) {
       throw Exception('Failed to connect to the server: $e');

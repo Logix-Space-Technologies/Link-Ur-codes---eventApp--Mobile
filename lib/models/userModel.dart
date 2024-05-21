@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final users = usersFromJson(jsonString);
-
 import 'dart:convert';
 
 List<Users> usersFromJson(String str) => List<Users>.from(json.decode(str).map((x) => Users.fromJson(x)));
@@ -9,38 +5,38 @@ List<Users> usersFromJson(String str) => List<Users>.from(json.decode(str).map((
 String usersToJson(List<Users> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class Users {
-  int userId;
+  int? userId;
   String userName;
-  String userEmail;
-  String userPassword;
-  int userContactNo;
-  dynamic userImage;
-  String userQualification;
-  String userSkills;
-  int userDeleteStatus;
+  String? userEmail;
+  String? userPassword;
+  int? userContactNo;
+  String? userImage;
+  String? userQualification;
+  String? userSkills;
+  int? userDeleteStatus;
 
   Users({
-    required this.userId,
+    this.userId,
     required this.userName,
-    required this.userEmail,
-    required this.userPassword,
-    required this.userContactNo,
-    required this.userImage,
-    required this.userQualification,
-    required this.userSkills,
-    required this.userDeleteStatus,
+    this.userEmail,
+    this.userPassword,
+    this.userContactNo,
+    this.userImage,
+    this.userQualification,
+    this.userSkills,
+    this.userDeleteStatus,
   });
 
   factory Users.fromJson(Map<String, dynamic> json) => Users(
-    userId: json["user_id"],
-    userName: json["user_name"],
-    userEmail: json["user_email"],
-    userPassword: json["user_password"],
-    userContactNo: json["user_contact_no"],
-    userImage: json["user_image"],
-    userQualification: json["user_qualification"],
-    userSkills: json["user_skills"],
-    userDeleteStatus: json["user_delete_status"],
+    userId: json["user_id"] != null ? json["user_id"] : null,
+    userName: json["user_name"] != null ? json["user_name"] : null,
+    userEmail: json["user_email"] != null ? json["user_email"] : null,
+    userPassword: json["user_password"] != null ? json["user_password"] : null,
+    userContactNo: json["user_contact_no"] != null ? json["user_contact_no"] : null,
+    userImage: json["user_image"] != null ? json["user_image"] : null,
+    userQualification: json["user_qualification"] != null ? json["user_qualification"] : null,
+    userSkills: json["user_skills"] != null ? json["user_skills"] : null,
+    userDeleteStatus: json["user_delete_status"] != null ? json["user_delete_status"] : null,
   );
 
   Map<String, dynamic> toJson() => {
@@ -55,4 +51,3 @@ class Users {
     "user_delete_status": userDeleteStatus,
   };
 }
-
