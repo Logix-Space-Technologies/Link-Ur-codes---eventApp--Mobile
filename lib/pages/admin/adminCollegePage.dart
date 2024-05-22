@@ -55,7 +55,7 @@ class _AdminCollegePageState extends State<AdminCollegePage> {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text('No Data Found'),
+            title: Text('College Not Found'),
             content: Text('No colleges matching the search criteria were found.'),
             actions: [
               TextButton(

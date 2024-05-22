@@ -4,8 +4,10 @@ import 'package:event_app_mobile/models/adminCollege.dart';
 import 'package:event_app_mobile/models/adminModel.dart';
 import 'package:event_app_mobile/models/privateEventModel.dart';
 import 'package:event_app_mobile/models/publicEventModel.dart';
+import 'package:event_app_mobile/models/userModel.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class AdminService {
@@ -204,6 +206,40 @@ class AdminService {
       throw Exception('Failed to connect to the server: $e');
     }
   }
+
+  static Future<List<Users>> searchUsers(String userName, String token) async {
+    final Uri uri = Uri.parse('${ApiConstants.baseUrl}/api/users/searchusers');
+    try {
+      final response = await http.post(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'token': token,
+        },
+        body: jsonEncode({'term': userName}),
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        if (data is List) {
+          // If the response is a list of maps
+          return data.map((e) => Users.fromJson(e as Map<String, dynamic>)).toList();
+        } else if (data is Map) {
+          // If the response is a single map, wrap it in a list and cast it correctly
+          return [Users.fromJson(data as Map<String, dynamic>)];
+        } else {
+          throw Exception('Unexpected response format');
+        }
+      } else if (response.statusCode == 404) {
+        return [];  // No data found
+      } else {
+        throw Exception('Failed to load Users');
+      }
+    } catch (e) {
+      throw Exception('Failed to connect to the server: $e');
+    }
+  }
+
 }
 
 

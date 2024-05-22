@@ -107,7 +107,7 @@ class _UserEventPageState extends State<UserEventPage> {
             Text('Events',style: TextStyle(color:  Color(0xFFFFFFFF),fontWeight: FontWeight.bold),),
           ],
         ),
-        leading: IconButton(onPressed: (){ Navigator.push(context, MaterialPageRoute(builder: (context)=>UserMenu()));}, icon:Icon(Icons.arrow_back_ios_new,color:  Color(
+        leading: IconButton(onPressed: (){ Navigator.pop(context);}, icon:Icon(Icons.arrow_back_ios_new,color:  Color(
             0xFFFFFFFF),)),
       ),
       body: Column(
