@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final users = usersFromJson(jsonString);
-
 import 'dart:convert';
 
 List<Users> usersFromJson(String str) => List<Users>.from(json.decode(str).map((x) => Users.fromJson(x)));
@@ -13,10 +9,10 @@ class Users {
   String userName;
   String userEmail;
   String userPassword;
-  int userContactNo;
+  int? userContactNo; // Changed to nullable int
   dynamic userImage;
-  String userQualification;
-  String userSkills;
+  String? userQualification;
+  String? userSkills;
   int userDeleteStatus;
 
   Users({
@@ -24,10 +20,10 @@ class Users {
     required this.userName,
     required this.userEmail,
     required this.userPassword,
-    required this.userContactNo,
-    required this.userImage,
-    required this.userQualification,
-    required this.userSkills,
+    this.userContactNo, // Updated
+    this.userImage,
+    this.userQualification, // Updated
+    this.userSkills, // Updated
     required this.userDeleteStatus,
   });
 
@@ -36,10 +32,10 @@ class Users {
     userName: json["user_name"],
     userEmail: json["user_email"],
     userPassword: json["user_password"],
-    userContactNo: json["user_contact_no"],
+    userContactNo: json["user_contact_no"], // Allow null
     userImage: json["user_image"],
-    userQualification: json["user_qualification"],
-    userSkills: json["user_skills"],
+    userQualification: json["user_qualification"], // Allow null
+    userSkills: json["user_skills"], // Allow null
     userDeleteStatus: json["user_delete_status"],
   );
 
@@ -48,11 +44,10 @@ class Users {
     "user_name": userName,
     "user_email": userEmail,
     "user_password": userPassword,
-    "user_contact_no": userContactNo,
+    "user_contact_no": userContactNo, // Allow null
     "user_image": userImage,
-    "user_qualification": userQualification,
-    "user_skills": userSkills,
+    "user_qualification": userQualification, // Allow null
+    "user_skills": userSkills, // Allow null
     "user_delete_status": userDeleteStatus,
   };
 }
-
