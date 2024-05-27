@@ -7,8 +7,8 @@ import 'package:excel/excel.dart';
 import 'package:open_file/open_file.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:file_selector/file_selector.dart';
-
 import '../../api_constants.dart';
+import 'package:intl/intl.dart';
 
 class StudentDetailsPage extends StatefulWidget {
   const StudentDetailsPage({Key? key}) : super(key: key);
@@ -23,13 +23,12 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
   late TextEditingController _admNoController;
   late TextEditingController _emailController;
   late TextEditingController _phoneNoController;
-  late TextEditingController _eventIdController;
-  late TextEditingController _collegeIdController;
   int _selectedPage = 0;
   PageController _pageController = PageController();
   File? _selectedFile;
-  late String _collegeToken;
-  late String studentCollegeId;
+  late String _collegeToken="";
+  late String studentCollegeId="";
+  late String eventId="";
 
   @override
   void initState() {
@@ -39,8 +38,6 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
     _admNoController = TextEditingController();
     _emailController = TextEditingController();
     _phoneNoController = TextEditingController();
-    _eventIdController = TextEditingController();
-    _collegeIdController = TextEditingController();
     _loadCollegeToken();
   }
 
@@ -51,14 +48,13 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
     _admNoController.dispose();
     _emailController.dispose();
     _phoneNoController.dispose();
-    _eventIdController.dispose();
-    _collegeIdController.dispose();
     _pageController.dispose();
     super.dispose();
   }
 
   Future<void> _addStudent() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  eventId = prefs.getString('event_id')!;
   final int studentCollegeIdInt = prefs.getInt('college_id') ?? 0; // Default value is 0
   final String studentCollegeId = studentCollegeIdInt.toString();
   final String collegeToken = prefs.getString('college_token') ?? '';
@@ -69,7 +65,7 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
   'student_admno': _admNoController.text,
   'student_email': _emailController.text,
   'student_phone_no': _phoneNoController.text,
-  'event_id': _eventIdController.text,
+  'event_id': eventId,
   'student_college_id': studentCollegeId,
   };
 
@@ -104,11 +100,13 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
 
   Future<void> _loadCollegeToken() async {
     final prefs = await SharedPreferences.getInstance();
+    final event_id = prefs.getString('event_id');
     final token = prefs.getString('college_token');
     final int studentCollegeIdInt = prefs.getInt('college_id') ?? 0; // Default value is 0
     final String _studentCollegeId = studentCollegeIdInt.toString();
     if (token != null) {
       setState(() {
+        eventId = event_id!;
         _collegeToken = token;
         studentCollegeId = _studentCollegeId;
       });
@@ -136,12 +134,13 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
     }
   }
 
-  Future<void> _uploadStudents(File file, String collegeToken , String studentCollegeId ) async {
+  Future<void> _uploadStudents(File file, String collegeToken , String studentCollegeId , String eventId) async {
     try {
       final url = Uri.parse('${ApiConstants.baseUrl}/api/college/studentupload');
       final request = http.MultipartRequest('POST', url)
         ..headers['collegetoken'] = '$collegeToken'
-        ..fields['college_id'] = studentCollegeId// Add the college token as a header
+        ..fields['college_id'] = studentCollegeId
+        ..fields['event_id'] = eventId
         ..files.add(await http.MultipartFile.fromPath('file', file.path));
 
       final streamedResponse = await request.send();
@@ -182,12 +181,15 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
         'student_rollno',
         'student_admno',
         'student_email',
-        'student_phone_no',
-        'event_id',
-        'student_college_id',
+        'student_phone_no'
       ]);
+
+      // Create a unique filename using a timestamp
+      final String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
+      final String fileName = 'sample_$timestamp.xlsx';
+
       final directory = await getTemporaryDirectory();
-      final filePath = '${directory.path}/sample.xlsx';
+      final filePath = '${directory.path}/$fileName';
       final file = File(filePath);
       await file.writeAsBytes((await excel.encode())!);
       OpenFile.open(filePath);
@@ -230,7 +232,7 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
                 ElevatedButton(
                   onPressed: () {
                     if (_selectedFile != null) {
-                      _uploadStudents(_selectedFile!, collegeToken, studentCollegeId);
+                      _uploadStudents(_selectedFile!, collegeToken, studentCollegeId,eventId);
                     }
                   },
                   style: ButtonStyle(
@@ -284,10 +286,6 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
               controller: _phoneNoController,
               decoration: InputDecoration(labelText: 'Phone No'),
             ),
-            TextField(
-              controller: _eventIdController,
-              decoration: InputDecoration(labelText: 'Event ID'),
-            ),
             SizedBox(height: 20.0),
             ElevatedButton(
                 onPressed: _addStudent,
@@ -305,7 +303,6 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
     );
   }
 
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -315,49 +312,52 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
       )
           : Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _selectedPage = 0;
-                    });
-                    _pageController.animateToPage(0,
-                        duration: Duration(milliseconds: 300),
-                        curve: Curves.easeInOut);
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                        _selectedPage == 0 ? Colors.black : Colors.grey),
-                  ),
-                  child: Text(
-                    'Upload Excel',
-                    style: TextStyle(color: Colors.white),
-                  ),
+          SizedBox(height: 50.0), // Added space for buttons to be centered
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center, // Centered buttons horizontally
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _selectedPage = 0;
+                  });
+                  _pageController.animateToPage(
+                    0,
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                      _selectedPage == 0 ? Colors.black : Colors.grey),
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _selectedPage = 1;
-                    });
-                    _pageController.animateToPage(1,
-                        duration: Duration(milliseconds: 300),
-                        curve: Curves.easeInOut);
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                        _selectedPage == 1 ? Colors.black : Colors.grey),
-                  ),
-                  child: Text(
-                    'Manual Entry',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                child: Text(
+                  'Upload Excel',
+                  style: TextStyle(color: Colors.white),
                 ),
-              ],
-            ),
+              ),
+              SizedBox(width: 20.0), // Added space between buttons
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _selectedPage = 1;
+                  });
+                  _pageController.animateToPage(
+                    1,
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                      _selectedPage == 1 ? Colors.black : Colors.grey),
+                ),
+                child: Text(
+                  'Manual Entry',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
           ),
           Expanded(
             child: PageView(
