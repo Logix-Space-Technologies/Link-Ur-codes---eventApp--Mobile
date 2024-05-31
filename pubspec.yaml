@@ -46,6 +46,7 @@ dependencies:
   file_picker: ^4.0.0
   permission_handler: ^11.3.1
   file_selector: ^1.0.3
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
