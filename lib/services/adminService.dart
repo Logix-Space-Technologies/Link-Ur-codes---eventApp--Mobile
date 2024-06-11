@@ -240,6 +240,54 @@ class AdminService {
     }
   }
 
+  static Future<Map<String, dynamic>> deletePublicEvent(String eventPublicId, String token) async {
+    final Uri uri = Uri.parse('${ApiConstants.baseUrl}/api/events/delete_public_event');
+    try {
+      final response = await http.post(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'token': token,
+        },
+        body: jsonEncode({'event_public_id': eventPublicId}),
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data; // Return the response as a Map
+      } else {
+        throw Exception('Failed to delete event');
+      }
+    } catch (e) {
+      throw Exception('Failed to connect to the server: $e');
+    }
+  }
+
+  static Future<String> deleteCollege(String collegeId, String token) async {
+    final url = '${ApiConstants.baseUrl}/api/college/deleteCollege';
+    final headers = {
+      'Content-Type': 'application/json',
+      'token': token,
+    };
+    final body = jsonEncode({'college_id': collegeId});
+
+    try {
+      final response = await http.post(Uri.parse(url), headers: headers, body: body);
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        if (responseData['status'] == 'success') {
+          return 'success';
+        } else {
+          return 'Failed to delete college: ${responseData['message']}';
+        }
+      } else {
+        return 'Failed to delete college: ${response.statusCode}';
+      }
+    } catch (e) {
+      return 'Error occurred while deleting the college: $e';
+    }
+  }
 }
+
+
 
 

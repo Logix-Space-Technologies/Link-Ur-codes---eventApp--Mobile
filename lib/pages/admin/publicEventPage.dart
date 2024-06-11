@@ -27,10 +27,12 @@ class _PublicEventPageState extends State<PublicEventPage> {
     String adminToken = prefs.getString("admintoken") ?? "";
     try {
       var response = await AdminService().getPublicEvents(adminToken);
-      return response.map<PublicEvents>((item) => PublicEvents.fromJson(item)).toList();
+      List<PublicEvents> events = response.map<PublicEvents>((item) => PublicEvents.fromJson(item)).toList();
+      print("Fetched events: ${events.length}");
+      return events;
     } catch (e) {
       print("Error fetching public events: $e");
-      throw e;
+      return [];
     }
   }
 
@@ -44,7 +46,6 @@ class _PublicEventPageState extends State<PublicEventPage> {
           publicEvents = Future.value(searchResults);
         });
       } else {
-        // Display an error message indicating no data was found
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -54,7 +55,6 @@ class _PublicEventPageState extends State<PublicEventPage> {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  // Reload the original events list
                   setState(() {
                     publicEvents = loadPublicEvents();
                   });
@@ -67,7 +67,6 @@ class _PublicEventPageState extends State<PublicEventPage> {
       }
     } catch (e) {
       print("Error searching events: $e");
-      // Display an error message indicating search failed
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -82,6 +81,33 @@ class _PublicEventPageState extends State<PublicEventPage> {
             ),
           ],
         ),
+      );
+    }
+  }
+
+  Future<void> _deleteEvent(int? eventPublicId) async {
+    if (eventPublicId == null) return;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String admintoken = prefs.getString("admintoken") ?? "";
+    try {
+      var response = await AdminService.deletePublicEvent(eventPublicId.toString(), admintoken);
+      if (response['status'] == 'success') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Event deleted successfully')),
+        );
+        setState(() {
+          publicEvents = loadPublicEvents();
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to delete event: ${response['error']}')),
+        );
+      }
+    } catch (e) {
+      print("Error deleting event: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An error occurred: $e')),
       );
     }
   }
@@ -129,7 +155,7 @@ class _PublicEventPageState extends State<PublicEventPage> {
                     itemCount: snapshot.data!.length,
                     itemBuilder: (context, index) {
                       PublicEvents event = snapshot.data![index];
-                      String imageUrl = '${ApiConstants.baseUrl}/${event.eventPublicImage}';
+                      String imageUrl = '${ApiConstants.baseUrl}/${event.eventPublicImage ?? ''}';
                       return Card(
                         child: ListTile(
                           leading: ClipRRect(
@@ -144,16 +170,27 @@ class _PublicEventPageState extends State<PublicEventPage> {
                               height: 50,
                             ),
                           ),
-                          title: Text(event.eventPublicName,style: TextStyle(fontWeight: FontWeight.bold),),
+                          title: Text(event.eventPublicName ?? '', style: TextStyle(fontWeight: FontWeight.bold)),
                           subtitle: Text(
-                             "Venue: ${event.eventVenue}\nAmount: ${event.eventPublicAmount}\nDescription: ${event.eventPublicDescription}\nDate: ${event.eventPublicDate}"),
-                          trailing: IconButton(
-                            icon: Icon(Icons.edit),
-                            onPressed: () {
-                              // Add action here that should be performed when the edit button is pressed
-                              // For example: Navigate to a different screen to edit the event
-                              print('Edit button pressed');
-                            },
+                              "Venue: ${event.eventVenue ?? ''}\nAmount: ${event.eventPublicAmount ?? ''}\nDescription: ${event.eventPublicDescription ?? ''}\nDate: ${event.eventPublicDate != null ? event.eventPublicDate!.toIso8601String() : ''}"),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.edit),
+                                onPressed: () {
+                                  // Add action here that should be performed when the edit button is pressed
+                                  // For example: Navigate to a different screen to edit the event
+                                  print('Edit button pressed');
+                                },
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.delete_forever_sharp, color: Colors.red),
+                                onPressed: () {
+                                  _deleteEvent(event.eventPublicId);
+                                },
+                              ),
+                            ],
                           ),
                         ),
                       );

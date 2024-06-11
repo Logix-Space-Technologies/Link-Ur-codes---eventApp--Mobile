@@ -93,6 +93,42 @@ class _AdminCollegePageState extends State<AdminCollegePage> {
     }
   }
 
+  Future<void> _deleteCollege(int? collegeId, int index) async {
+    if (collegeId == null) {
+      // Handle the case where collegeId is null
+      return;
+    }
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String adminToken = prefs.getString("admintoken") ?? "";
+    try {
+      var response = await AdminService.deleteCollege(collegeId.toString(), adminToken);
+      if (response == 'success') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('College deleted successfully')),
+        );
+        // Update colleges after successful deletion
+        setState(() {
+          // Remove the deleted college from the list
+          colleges.then((value) {
+            value.removeAt(index);
+            return value;
+          });
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$response')),
+        );
+      }
+    } catch (e) {
+      print("Error deleting college: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An error occurred while deleting college')),
+      );
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -164,16 +200,28 @@ class _AdminCollegePageState extends State<AdminCollegePage> {
                       ),
                     ),
                     title: Text(college.collegeName),
-                    subtitle: Text("Email: ${college.collegeEmail}\nPhone: ${college.collegePhone}"),
-                    trailing: IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () async {
-                        print('Edit button pressed for: ${college.collegeId}');
-                        await _saveToPreferences(college.collegeId.toString());
-                        Navigator.push(context,
-                            MaterialPageRoute(builder:
-                                (context) => EditCollege()));
-                      },
+                    subtitle: Text("Email: ${college.collegeEmail}\nPhone: ${college.collegePhone}\nCollege website: ${college.collegeWebsite}"),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.edit),
+                          onPressed: () async {
+                            print('Edit button pressed for: ${college.collegeId}');
+                            await _saveToPreferences(college.collegeId.toString());
+                            Navigator.push(context,
+                                MaterialPageRoute(builder:
+                                    (context) => EditCollege()));
+                          },
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.delete_forever_sharp,color: Colors.red,),
+                          onPressed: () {
+                            _deleteCollege(college.collegeId, index);
+                          },
+                        ),
+
+                      ],
                     ),
                   ),
                 );
