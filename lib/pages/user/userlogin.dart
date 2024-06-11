@@ -1,3 +1,4 @@
+import 'package:event_app_mobile/pages/user/forgotPass.dart';
 import 'package:event_app_mobile/pages/user/userHomePage.dart';
 import 'package:event_app_mobile/pages/user/userRegister.dart';
 import 'package:event_app_mobile/services/userService.dart';
@@ -73,6 +74,18 @@ class _UserLoginState extends State<UserLogin> {
                 ),
               ),
               style: TextStyle(color: Colors.black),
+            ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ForgotPassPage()),
+                  );
+                },
+                child: Text('Forgot Password?'),
+              ),
             ),
             SizedBox(height: 20.0),
             Align(
