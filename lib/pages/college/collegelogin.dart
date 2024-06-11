@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/collegeService.dart';
 import 'collegeHomePage.dart';
+import 'forgotpassword.dart';
 
 class CollegeLogin extends StatefulWidget {
   @override
@@ -25,7 +26,7 @@ class _CollegeLoginState extends State<CollegeLogin> {
             SizedBox(
               width: 5,
             ),
-            Text('College Login',style: TextStyle(color:  Color(0xFFFFFFFF),fontWeight: FontWeight.bold),),
+            Text('Faculty Login',style: TextStyle(color:  Color(0xFFFFFFFF),fontWeight: FontWeight.bold),),
           ],
         ),
         leading: IconButton(onPressed: (){Navigator.pop(context);}, icon:Icon(Icons.arrow_back_ios_new,color:  Color(0xFFFFFFFF),)),
@@ -72,6 +73,18 @@ class _CollegeLoginState extends State<CollegeLogin> {
               ),
               style: TextStyle(color: Colors.black),
             ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ForgotPasswordPage()),
+                  );
+                },
+                child: Text('Forgot Password?'),
+              ),
+            ),
             SizedBox(height: 20.0),
             Align(
               alignment: Alignment.centerRight,
@@ -109,23 +122,25 @@ class _CollegeLoginState extends State<CollegeLogin> {
       // Store college_id and token in shared preferences
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setInt('college_id', data['college_id']);
+      prefs.setInt('department_id', data['department_id']);
       prefs.setString('college_token', token);
 
       print('College ID: ${data['college_id']}');
+      print('Depart ID: ${data['department_id']}');
       print('College Token: $token');
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(response['message']),
-          backgroundColor: Colors.green,
-        ),
-      );
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     content: Text(response['message']),
+      //     backgroundColor: Colors.green,
+      //   ),
+      // );
       Navigator.push(context, MaterialPageRoute(builder: (context)=>CollegeMenu()));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(response['message']),
-          backgroundColor: Colors.red,
+          backgroundColor: Colors.grey,
         ),
       );
     }
