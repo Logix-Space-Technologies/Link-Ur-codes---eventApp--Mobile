@@ -70,7 +70,7 @@ class _AdminLoginState extends State<AdminLogin> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor:Color(0xFF1D1E33),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -134,7 +134,7 @@ class _AdminLoginState extends State<AdminLogin> {
                   style: TextStyle(color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
+                  backgroundColor: Color(0xFF1D1E33),
                   padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),

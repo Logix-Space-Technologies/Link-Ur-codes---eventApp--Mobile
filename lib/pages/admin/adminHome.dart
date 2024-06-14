@@ -23,7 +23,7 @@ class _AdminHomeState extends State<AdminHome> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.black,
+          backgroundColor: Color(0xFF1D1E33),
           foregroundColor: Colors.white,
           leading: IconButton(
             onPressed: () {
@@ -52,7 +52,7 @@ class _AdminHomeState extends State<AdminHome> {
           children: pages,
         ),
         bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Colors.black,
+          backgroundColor: Color(0xFF1D1E33),
           selectedItemColor: Colors.white,
           unselectedItemColor: Colors.grey,
           selectedLabelStyle: TextStyle(color: Colors.white),

@@ -262,28 +262,60 @@ class AdminService {
     }
   }
 
-  static Future<String> deleteCollege(String collegeId, String token) async {
-    final url = '${ApiConstants.baseUrl}/api/college/deleteCollege';
+  static Future<Map<String, dynamic>> deletePrivateEvent(String eventPrivateId, String token) async {
+    final Uri uri = Uri.parse('${ApiConstants.baseUrl}/api/events/delete_private_event');
+    try {
+      final response = await http.post(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'token': token,
+        },
+        body: jsonEncode({'event_private_id': eventPrivateId}),
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data; // Return the response as a Map
+      } else {
+        throw Exception('Failed to delete event');
+      }
+    } catch (e) {
+      throw Exception('Failed to connect to the server: $e');
+    }
+  }
+
+
+    Future<Map<String, dynamic>> deleteCollege(String collegeId, String token) async {
+      final url = Uri.parse('${ApiConstants.baseUrl}/api/college/deleteCollege');
+      final headers = {
+        'Content-Type': 'application/json',
+        'token': token,
+      };
+      final body = jsonEncode({'college_id': collegeId});
+
+      final response = await http.post(url, headers: headers, body: body);
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        throw Exception(' Deleted college');
+      }
+    }
+
+  Future<Map<String, dynamic>> deleteUser(String userId, String token) async {
+    final url = Uri.parse('${ApiConstants.baseUrl}/api/users/delete-users');
     final headers = {
       'Content-Type': 'application/json',
       'token': token,
     };
-    final body = jsonEncode({'college_id': collegeId});
+    final body = jsonEncode({'user_id': userId});
 
-    try {
-      final response = await http.post(Uri.parse(url), headers: headers, body: body);
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        if (responseData['status'] == 'success') {
-          return 'success';
-        } else {
-          return 'Failed to delete college: ${responseData['message']}';
-        }
-      } else {
-        return 'Failed to delete college: ${response.statusCode}';
-      }
-    } catch (e) {
-      return 'Error occurred while deleting the college: $e';
+    final response = await http.post(url, headers: headers, body: body);
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to delete user');
     }
   }
 }
