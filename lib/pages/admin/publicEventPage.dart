@@ -171,7 +171,7 @@ class _PublicEventPageState extends State<PublicEventPage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => AddPublicEvent()),
+            MaterialPageRoute(builder: (context) => AddPublicEventScreen()),
           );
         },
         backgroundColor: Colors.black, // Background color of the button
