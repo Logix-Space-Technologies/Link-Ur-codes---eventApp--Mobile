@@ -4,6 +4,8 @@ import 'package:event_app_mobile/pages/admin/addPublicEvent.dart';
 import 'package:event_app_mobile/services/adminService.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:intl/intl.dart'; // Add this import for date formatting
 
 class PublicEventPage extends StatefulWidget {
   const PublicEventPage({super.key});
@@ -27,10 +29,12 @@ class _PublicEventPageState extends State<PublicEventPage> {
     String adminToken = prefs.getString("admintoken") ?? "";
     try {
       var response = await AdminService().getPublicEvents(adminToken);
-      return response.map<PublicEvents>((item) => PublicEvents.fromJson(item)).toList();
+      List<PublicEvents> events = response.map<PublicEvents>((item) => PublicEvents.fromJson(item)).toList();
+      print("Fetched events: ${events.length}");
+      return events;
     } catch (e) {
       print("Error fetching public events: $e");
-      throw e;
+      return [];
     }
   }
 
@@ -44,7 +48,6 @@ class _PublicEventPageState extends State<PublicEventPage> {
           publicEvents = Future.value(searchResults);
         });
       } else {
-        // Display an error message indicating no data was found
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -54,7 +57,6 @@ class _PublicEventPageState extends State<PublicEventPage> {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  // Reload the original events list
                   setState(() {
                     publicEvents = loadPublicEvents();
                   });
@@ -67,7 +69,6 @@ class _PublicEventPageState extends State<PublicEventPage> {
       }
     } catch (e) {
       print("Error searching events: $e");
-      // Display an error message indicating search failed
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -86,9 +87,46 @@ class _PublicEventPageState extends State<PublicEventPage> {
     }
   }
 
+  Future<void> _deleteEvent(int? eventPublicId) async {
+    if (eventPublicId == null) return;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String admintoken = prefs.getString("admintoken") ?? "";
+    try {
+      var response = await AdminService.deletePublicEvent(eventPublicId.toString(), admintoken);
+      if (response['status'] == 'success') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Event deleted successfully')),
+        );
+        setState(() {
+          publicEvents = loadPublicEvents();
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to delete event: ${response['error']}')),
+        );
+      }
+    } catch (e) {
+      print("Error deleting event: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An error occurred: $e')),
+      );
+    }
+  }
+
+  Future<void> _downloadSyllabus(String syllabusPath) async {
+    final Uri syllabusUrl = Uri.parse('${ApiConstants.baseUrl}/$syllabusPath');
+    if (await canLaunchUrl(syllabusUrl)) {
+      await launchUrl(syllabusUrl, mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch $syllabusUrl';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFFFFFFF),
       body: Column(
         children: [
           Padding(
@@ -97,12 +135,15 @@ class _PublicEventPageState extends State<PublicEventPage> {
               controller: _searchController,
               decoration: InputDecoration(
                 hintText: 'Search Events',
+                hintStyle: TextStyle(color: Colors.black),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5),
                 ),
+                filled: true,
+                fillColor: Colors.white,
                 contentPadding: EdgeInsets.symmetric(vertical: 3),
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.search),
+                  icon: Icon(Icons.search, color: Colors.black),
                   onPressed: () {
                     String eventName = _searchController.text.trim();
                     if (eventName.isNotEmpty) {
@@ -111,6 +152,7 @@ class _PublicEventPageState extends State<PublicEventPage> {
                   },
                 ),
               ),
+              style: TextStyle(color: Colors.white),
             ),
           ),
           Expanded(
@@ -129,31 +171,116 @@ class _PublicEventPageState extends State<PublicEventPage> {
                     itemCount: snapshot.data!.length,
                     itemBuilder: (context, index) {
                       PublicEvents event = snapshot.data![index];
-                      String imageUrl = '${ApiConstants.baseUrl}/${event.eventPublicImage}';
+                      String imageUrl = '${ApiConstants.baseUrl}/${event.eventPublicImage ?? ''}';
                       return Card(
+                        color: Color(0xFF1D1E33),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
                         child: ListTile(
+                          contentPadding: EdgeInsets.all(10),
                           leading: ClipRRect(
-                            borderRadius: BorderRadius.circular(50),
+                            borderRadius: BorderRadius.circular(8),
                             child: Image.network(
                               imageUrl,
                               errorBuilder: (context, error, stackTrace) {
-                                return Icon(Icons.broken_image);
+                                return Icon(Icons.broken_image, color: Colors.white70);
                               },
                               fit: BoxFit.cover,
-                              width: 50,
-                              height: 50,
+                              width: 80,
+                              height: 80,
                             ),
                           ),
-                          title: Text(event.eventPublicName,style: TextStyle(fontWeight: FontWeight.bold),),
-                          subtitle: Text(
-                             "Venue: ${event.eventVenue}\nAmount: ${event.eventPublicAmount}\nDescription: ${event.eventPublicDescription}\nDate: ${event.eventPublicDate}"),
-                          trailing: IconButton(
-                            icon: Icon(Icons.edit),
-                            onPressed: () {
-                              // Add action here that should be performed when the edit button is pressed
-                              // For example: Navigate to a different screen to edit the event
-                              print('Edit button pressed');
-                            },
+                          title: Text(event.eventPublicName ?? '', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(Icons.calendar_today, color: Colors.white70, size: 16),
+                                  SizedBox(width: 5),
+                                  Text(
+                                    DateFormat('MMM dd, yyyy').format(event.eventPublicDate),
+                                    style: TextStyle(color: Colors.white70),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 5),
+                              Row(
+                                children: [
+                                  Icon(Icons.location_on, color: Colors.white70, size: 16),
+                                  SizedBox(width: 5),
+                                  Expanded(
+                                    child: Text(
+                                      event.eventVenue ?? '',
+                                      style: TextStyle(color: Colors.white70),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 5),
+                              Text(
+                                "Amount: ${event.eventPublicAmount}",
+                                style: TextStyle(color: Colors.white70),
+                              ),
+                              SizedBox(height: 5),
+                              Text(
+                                "Description: ${event.eventPublicDescription}",
+                                style: TextStyle(color: Colors.white70),
+                              ),
+                              SizedBox(height: 5),
+                              Text(
+                                "Duration: ${event.eventPublicDuration} minutes",
+                                style: TextStyle(color: Colors.white70),
+                              ),
+                              SizedBox(height: 5),
+                              Text(
+                                "Online: ${event.eventPublicOnline ??  ''}",
+                                style: TextStyle(color: Colors.white70),
+                              ),
+                              SizedBox(height: 5),
+                              Text(
+                                "Offline: ${event.eventPublicOffline ??  ''}",
+                                style: TextStyle(color: Colors.white70),
+                              ),
+                              SizedBox(height: 5),
+                              Text(
+                                "Recorded: ${event.eventPublicRecorded??  ''}",
+                                style: TextStyle(color: Colors.white70),
+                              ),
+                              SizedBox(height: 5),
+                              if (event.eventSyllabus != null && event.eventSyllabus.isNotEmpty)
+                                Row(
+                                  children: [
+                                    Icon(Icons.picture_as_pdf, color: Colors.red),
+                                    SizedBox(width: 5),
+                                    InkWell(
+                                      child: Text('Download Syllabus', style: TextStyle(color: Colors.blue)),
+                                      onTap: () => _downloadSyllabus(event.eventSyllabus),
+                                    ),
+                                  ],
+                                ),
+                            ],
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.edit, color:Colors.white),
+                                onPressed: () {
+                                  // Add action here that should be performed when the edit button is pressed
+                                  // For example: Navigate to a different screen to edit the event
+                                  print('Edit button pressed');
+                                },
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.delete_forever_sharp, color: Colors.red),
+                                onPressed: () {
+                                  _deleteEvent(event.eventPublicId);
+                                },
+                              ),
+                            ],
                           ),
                         ),
                       );
@@ -174,8 +301,8 @@ class _PublicEventPageState extends State<PublicEventPage> {
             MaterialPageRoute(builder: (context) => AddPublicEvent()),
           );
         },
-        backgroundColor: Colors.black, // Background color of the button
-        foregroundColor: Colors.white, // Color of the icon
+        backgroundColor: Colors.white, // Background color of the button
+        foregroundColor: Color(0xFF1D1E33), // Color of the icon
         heroTag: "addEventFab", // Unique tag
         child: Icon(Icons.add), // Icon to display
       ),

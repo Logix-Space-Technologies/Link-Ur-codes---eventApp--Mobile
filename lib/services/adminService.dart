@@ -240,6 +240,86 @@ class AdminService {
     }
   }
 
+  static Future<Map<String, dynamic>> deletePublicEvent(String eventPublicId, String token) async {
+    final Uri uri = Uri.parse('${ApiConstants.baseUrl}/api/events/delete_public_event');
+    try {
+      final response = await http.post(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'token': token,
+        },
+        body: jsonEncode({'event_public_id': eventPublicId}),
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data; // Return the response as a Map
+      } else {
+        throw Exception('Failed to delete event');
+      }
+    } catch (e) {
+      throw Exception('Failed to connect to the server: $e');
+    }
+  }
+
+  static Future<Map<String, dynamic>> deletePrivateEvent(String eventPrivateId, String token) async {
+    final Uri uri = Uri.parse('${ApiConstants.baseUrl}/api/events/delete_private_event');
+    try {
+      final response = await http.post(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'token': token,
+        },
+        body: jsonEncode({'event_private_id': eventPrivateId}),
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data; // Return the response as a Map
+      } else {
+        throw Exception('Failed to delete event');
+      }
+    } catch (e) {
+      throw Exception('Failed to connect to the server: $e');
+    }
+  }
+
+
+    Future<Map<String, dynamic>> deleteCollege(String collegeId, String token) async {
+      final url = Uri.parse('${ApiConstants.baseUrl}/api/college/deleteCollege');
+      final headers = {
+        'Content-Type': 'application/json',
+        'token': token,
+      };
+      final body = jsonEncode({'college_id': collegeId});
+
+      final response = await http.post(url, headers: headers, body: body);
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        throw Exception(' Deleted college');
+      }
+    }
+
+  Future<Map<String, dynamic>> deleteUser(String userId, String token) async {
+    final url = Uri.parse('${ApiConstants.baseUrl}/api/users/delete-users');
+    final headers = {
+      'Content-Type': 'application/json',
+      'token': token,
+    };
+    final body = jsonEncode({'user_id': userId});
+
+    final response = await http.post(url, headers: headers, body: body);
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to delete user');
+    }
+  }
 }
+
+
 
 

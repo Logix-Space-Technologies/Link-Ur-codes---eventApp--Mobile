@@ -55,6 +55,33 @@ class _AdminUserPageState extends State<AdminUserPage> {
     }
   }
 
+  Future<void> _deleteUser(int? userId, int index) async {
+    if (userId == null) return;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String adminToken = prefs.getString("admintoken") ?? "";
+    try {
+      var response = await _adminService.deleteUser(userId.toString(), adminToken);
+      if (response['status'] == 'success') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('User deleted successfully')),
+        );
+        setState(() {
+          users = loadUsers();
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to delete user: ${response['error']}')),
+        );
+      }
+    } catch (e) {
+      print("Error deleting user: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An error occurred: $e')),
+      );
+    }
+  }
+
   void _showDialog(String title, String content) {
     showDialog(
       context: context,
@@ -79,6 +106,7 @@ class _AdminUserPageState extends State<AdminUserPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFFFFFFF),
       appBar: AppBar(
         toolbarHeight: 80,
         backgroundColor: Colors.white,
@@ -94,6 +122,8 @@ class _AdminUserPageState extends State<AdminUserPage> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
                     ),
+                    filled: true,
+                    fillColor: Colors.white,
                     contentPadding: EdgeInsets.symmetric(vertical: 3),
                     hintStyle: TextStyle(color: Colors.black),
                   ),
@@ -133,25 +163,48 @@ class _AdminUserPageState extends State<AdminUserPage> {
                 Users user = snapshot.data![index];
                 String imageUrl = user.userImage != null ? '${ApiConstants.baseUrl}/${user.userImage}' : 'default_image_url';
                 return Card(
+                  color: Color(0xFF1D1E33),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
                   child: ListTile(
+                    contentPadding: EdgeInsets.all(10),
                     leading: ClipRRect(
                       borderRadius: BorderRadius.circular(50),
                       child: Image.network(
                         imageUrl,
                         errorBuilder: (context, error, stackTrace) {
-                          return Icon(Icons.broken_image);
+                          return Icon(Icons.broken_image, color: Colors.white70);
                         },
                         fit: BoxFit.cover,
                         width: 50,
                         height: 50,
                       ),
                     ),
-                    title: Text(user.userName),
-                    subtitle: Text(
-                        "Email: ${user.userEmail.isNotEmpty ? user.userEmail : 'N/A'}\n"
-                            "Phone: ${user.userContactNo != null ? user.userContactNo.toString() : 'N/A'}\n"
-                            "Qualification: ${user.userQualification != null ? user.userQualification : 'N/A'}\n"
-                            "Skills: ${user.userSkills != null ? user.userSkills : 'N/A'}"
+                    title: Text(user.userName, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 5),
+                        Text("Email: ${user.userEmail.isNotEmpty ? user.userEmail : 'N/A'}", style: TextStyle(color: Colors.white70)),
+                        SizedBox(height: 5),
+                        Text("Phone: ${user.userContactNo != null ? user.userContactNo.toString() : 'N/A'}", style: TextStyle(color: Colors.white70)),
+                        SizedBox(height: 5),
+                        Text("Qualification: ${user.userQualification != null ? user.userQualification : 'N/A'}", style: TextStyle(color: Colors.white70)),
+                        SizedBox(height: 5),
+                        Text("Skills: ${user.userSkills != null ? user.userSkills : 'N/A'}", style: TextStyle(color: Colors.white70)),
+                      ],
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.delete_forever_sharp, color: Colors.red),
+                          onPressed: () {
+                            _deleteUser(user.userId, index);
+                          },
+                        ),
+                      ],
                     ),
                   ),
                 );

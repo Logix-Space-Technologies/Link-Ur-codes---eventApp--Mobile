@@ -28,7 +28,7 @@ class _AdminEventPageState extends State<AdminEventPage> with SingleTickerProvid
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: Color(0xFF1D1E33),
         title: TabBar(
           controller: _tabController,
           labelColor: Colors.white,

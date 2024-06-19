@@ -7,23 +7,25 @@ String collegesToJson(List<Colleges> data) => json.encode(List<dynamic>.from(dat
 class Colleges {
   int? collegeId;
   String collegeName;
-  String? collegeEmail;
-  int? collegePhone;
+  String collegeEmail;
+  int collegePhone;
+  String collegeWebsite;
   String? collegePassword;
   String? collegeImage;
-  int? collegeCertificateRequest;
-  int? deleteStatus;
-  int? collegeAddedby;
-  int? collegeUpdatedby;
-  DateTime? collegeAddedDate;
-  DateTime? collegeUpdatedDate;
+  int collegeCertificateRequest;
+  int deleteStatus;
+  int collegeAddedby;
+  int collegeUpdatedby;
+  DateTime collegeAddedDate;
+  DateTime collegeUpdatedDate;
 
   Colleges({
-    required this.collegeId,
+    this.collegeId,
     required this.collegeName,
     required this.collegeEmail,
     required this.collegePhone,
-    required this.collegePassword,
+    required this.collegeWebsite,
+    this.collegePassword,
     this.collegeImage,
     required this.collegeCertificateRequest,
     required this.deleteStatus,
@@ -38,6 +40,7 @@ class Colleges {
     collegeName: json["college_name"],
     collegeEmail: json["college_email"],
     collegePhone: json["college_phone"] != null ? json["college_phone"] : 0,
+    collegeWebsite: json["college_website"],
     collegePassword: json["college_password"],
     collegeImage: json["college_image"],
     collegeCertificateRequest: json["college_certificate_request"] != null ? json["college_certificate_request"] : 0,
@@ -53,13 +56,14 @@ class Colleges {
     "college_name": collegeName,
     "college_email": collegeEmail,
     "college_phone": collegePhone,
+    "college_website": collegeWebsite,
     "college_password": collegePassword,
     "college_image": collegeImage,
     "college_certificate_request": collegeCertificateRequest,
     "delete_status": deleteStatus,
     "college_addedby": collegeAddedby,
     "college_updatedby": collegeUpdatedby,
-    "college_added_date": collegeAddedDate?.toIso8601String(),
-    "college_updated_date": collegeUpdatedDate?.toIso8601String(),
+    "college_added_date": collegeAddedDate.toIso8601String(),
+    "college_updated_date": collegeUpdatedDate.toIso8601String(),
   };
 }
