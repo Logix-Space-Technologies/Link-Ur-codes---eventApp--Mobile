@@ -54,6 +54,7 @@ class _Splash_ScreenState extends State<Splash_Screen> with SingleTickerProvider
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircleAvatar(
+                  backgroundColor: Color(0xFFEAE4E4),
                   radius: 100,
                   child: Image.asset('assets/logo.png'), // Your logo image
                 )

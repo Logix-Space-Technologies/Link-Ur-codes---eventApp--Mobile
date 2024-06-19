@@ -48,13 +48,6 @@ class _HomePageState extends State<HomePage> {
               },
               gradientColors: [Color(0xFF1D1E33), Color(0xff6aa4a1)],
             ),
-            LoginCard(
-              title: 'Student Login',
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => StudentLogin()));
-              },
-              gradientColors: [Color(0xFF1D1E33), Color(0xff6aa4a1)],
-            ),
           ],
         ),
       ),
@@ -97,6 +90,7 @@ class LoginCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 20,
                   color: Colors.white,
+                  fontWeight: FontWeight.bold
                 ),
               ),
             ),

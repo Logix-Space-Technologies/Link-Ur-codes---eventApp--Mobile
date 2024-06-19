@@ -48,6 +48,7 @@ dependencies:
   file_selector: ^1.0.3
   intl: ^0.19.0
   url_launcher: ^6.0.20
+  jwt_decode: ^0.3.0
 
 dev_dependencies:
   flutter_test:
@@ -75,6 +76,7 @@ flutter:
   assets:
     - assets/logo.png
     - assets/bglogo.png
+    - assets/forgot-password.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

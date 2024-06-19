@@ -1,3 +1,4 @@
+import 'package:event_app_mobile/pages/user/UserResetPassword.dart';
 import 'package:event_app_mobile/pages/user/userHomePage.dart';
 import 'package:event_app_mobile/pages/user/userRegister.dart';
 import 'package:event_app_mobile/services/userService.dart';
@@ -19,105 +20,149 @@ class _UserLoginState extends State<UserLogin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 5,
-            ),
-            Text('User Login',style: TextStyle(color:  Color(0xFFFFFFFF),fontWeight: FontWeight.bold),),
-          ],
-        ),
-        leading: IconButton(onPressed: (){Navigator.pop(context);}, icon:Icon(Icons.arrow_back_ios_new,color:  Color(0xFFFFFFFF),)),
-      ),
-      body: Container(
-        padding: EdgeInsets.all(20.0),
-        color: Colors.white,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextFormField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                labelText: 'Email',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                filled: true,
-                fillColor: Colors.grey[200],
-                prefixIcon: Icon(Icons.email),
+      body: Stack(
+        children: [
+          // Gradient top half background
+          Container(
+            height: MediaQuery.of(context).size.height / 2,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xFF1D1E33),
+                  Color(0xFF6AA4A1),
+                ],
               ),
-              style: TextStyle(color: Colors.black),
-            ),
-            SizedBox(height: 20.0),
-            TextFormField(
-              controller: _passwordController,
-              obscureText: _isObscure, // Use _isObscure to toggle visibility
-              decoration: InputDecoration(
-                labelText: 'Password',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                filled: true,
-                fillColor: Colors.grey[200],
-                prefixIcon: Icon(Icons.lock),
-                suffixIcon: IconButton(
-                  icon: Icon(_isObscure ? Icons.visibility : Icons.visibility_off),
-                  onPressed: () {
-                    setState(() {
-                      _isObscure = !_isObscure; // Toggle visibility on button press
-                    });
-                  },
-                ),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(50),
+                bottomRight: Radius.circular(50),
               ),
-              style: TextStyle(color: Colors.black),
             ),
-            SizedBox(height: 20.0),
-            Align(
-              alignment: Alignment.centerRight,
-              child: ElevatedButton(
-                onPressed: _login,
-                child: Text(
-                  'Login',
-                  style: TextStyle(color: Colors.white),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+          ),
+          // Back arrow
+          Positioned(
+            top: 40,
+            left: 10,
+            child: IconButton(
+              icon: Icon(Icons.arrow_back_ios_new_outlined, color: Colors.white),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+          // Login form
+          Center(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
+                    margin: EdgeInsets.symmetric(horizontal: 20.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 10,
+                          offset: Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          'User Login',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        TextFormField(
+                          controller: _emailController,
+                          decoration: InputDecoration(
+                            labelText: 'Email',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey[200],
+                            prefixIcon: Icon(Icons.email,color: Color(0xff6aa4a1)),
+                          ),
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        SizedBox(height: 20.0),
+                        TextFormField(
+                          controller: _passwordController,
+                          obscureText: _isObscure, // Use _isObscure to toggle visibility
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey[200],
+                            prefixIcon: Icon(Icons.lock,color: Color(0xff6aa4a1)),
+                            suffixIcon: IconButton(
+                              icon: Icon(_isObscure ? Icons.visibility : Icons.visibility_off,color: Color(0xff6aa4a1)),
+                              onPressed: () {
+                                setState(() {
+                                  _isObscure = !_isObscure; // Toggle visibility on button press
+                                });
+                              },
+                            ),
+                          ),
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        SizedBox(height: 10.0),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => ForgotPassPage(),));}, // Add forgot password functionality here
+                            child: Text('Forgot Password?', style: TextStyle(color: Color(0xFF1D1E33))),
+                          ),
+                        ),
+                        SizedBox(height: 20.0),
+                        ElevatedButton(
+                          onPressed: _login,
+                          child: Text(
+                            'Login',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF1D1E33),
+                            padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
+                  SizedBox(height: 20.0),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => UserRegisterPage()),
+                      );
+                    },
+                    child: Text(
+                      'Don\'t have an account? Sign Up',
+                      style: TextStyle(color: Color(0xFF1D1E33)),
+                    ),
+                  ),
+                ],
               ),
             ),
-            SizedBox(height: 25.0),
-            Container(
-              alignment: Alignment.center,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              UserRegisterPage()));
-                },
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.black),
-                child: Text(
-                  "Don't have an account? Sign Up",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
-
 
   void _login() async {
     final email = _emailController.text.trim();
@@ -129,22 +174,15 @@ class _UserLoginState extends State<UserLogin> {
       final data = response['data'];
       final token = response['token'];
 
-      // Store college_id and token in shared preferences
+      // Store user_id and token in shared preferences
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setInt('user_id', data['user_id']);
       prefs.setString('user_token', token);
       print('User ID: ${data['user_id']}');
       print('User Token: $token');
 
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   SnackBar(
-      //     content: Text(response['message']),
-      //     backgroundColor: Colors.green,
-      //   ),
-      // );
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>UserMenu()));
-    }
-    else {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => UserMenu()));
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(response['message']),
