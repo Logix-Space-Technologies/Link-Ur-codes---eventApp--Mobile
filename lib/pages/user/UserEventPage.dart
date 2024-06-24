@@ -104,7 +104,7 @@ class _UserEventPageState extends State<UserEventPage> {
             SizedBox(
               width: 5,
             ),
-            Text('Events',style: TextStyle(color:  Color(0xFFFFFFFF),fontWeight: FontWeight.bold),),
+            Text('Public Events',style: TextStyle(color:  Color(0xFFFFFFFF),fontWeight: FontWeight.bold),),
           ],
         ),
         leading: IconButton(onPressed: (){ Navigator.pop(context);}, icon:Icon(Icons.arrow_back_ios_new,color:  Color(

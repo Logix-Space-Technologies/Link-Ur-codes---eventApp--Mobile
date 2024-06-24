@@ -1,3 +1,4 @@
+import 'package:event_app_mobile/pages/student/StudentViewEvents.dart';
 import 'package:event_app_mobile/pages/user/UserEventPage.dart';
 import 'package:event_app_mobile/pages/user/UserFeedbackPage.dart';
 import 'package:event_app_mobile/pages/user/UserProfilePage.dart';
@@ -13,9 +14,7 @@ class _UserMenuState extends State<UserMenu> {
   static final List<Widget> _widgetOptions = <Widget>[
     UserProfilePage(),
     UserEventPage(),
-    EventHistoryPage(),
-    UserFeedbackPage(),
-
+    StudentEventView(),
   ];
 
   void _onItemTapped(int index) {
@@ -43,11 +42,7 @@ class _UserMenuState extends State<UserMenu> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.event_repeat),
-            label: 'Event History',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: 'Feedback',
+            label: 'Private Event ',
           ),
         ],
         currentIndex: _selectedIndex,
@@ -62,24 +57,4 @@ class _UserMenuState extends State<UserMenu> {
 
 
 
-class EventHistoryPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 5,
-            ),
-            Text('Event History',style: TextStyle(color:  Color(0xFFFFFFFF),fontWeight: FontWeight.bold),),
-          ],
-        ),
-        leading: IconButton(onPressed: (){Navigator.pop(context);}, icon:Icon(Icons.arrow_back_ios_new,color:  Color(
-            0xFFFFFFFF),)),
-      ),
-    );
-  }
-}
+
