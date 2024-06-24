@@ -21,56 +21,54 @@ class _AdminLoginState extends State<AdminLogin> {
       final response = await AdminService.loginAdmin(username, password);
       if (response['status'] == 'success') {
         final admintoken = response['admintoken'];
+        final adminId = response['adminData']['admin_id']; // Get admin ID from response
 
-        // Save token to SharedPreferences
-        final prefs = await SharedPreferences.getInstance();
-        prefs.setString('admintoken', admintoken);
-        print("admintoken:" + admintoken);
+        if (admintoken != null && adminId != null) {
+          // Save token and admin ID to SharedPreferences
+          final prefs = await SharedPreferences.getInstance();
+          prefs.setString('admintoken', admintoken);
+          prefs.setInt('adminId', adminId); // Save admin ID as int
 
-        // Navigate to admin dashboard or any desired page
-        Navigator.push(context, MaterialPageRoute(builder: (context) => AdminHome()));
+          print("admintoken: $admintoken");
+          print("adminId: $adminId");
+
+          // Navigate to admin dashboard or any desired page
+          Navigator.push(context, MaterialPageRoute(builder: (context) => AdminHome()));
+        } else {
+          _showErrorDialog('Invalid response from server.');
+        }
       } else {
-        // Display error message
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Error'),
-            content: Text(response['status']),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text('OK'),
-              ),
-            ],
-          ),
-        );
+        _showErrorDialog(response['status']);
       }
     } catch (error) {
       print('Error: $error');
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Error'),
-          content: Text('Failed to login admin. Please try again later.'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
+      _showErrorDialog('Failed to login admin. Please try again later.');
     }
   }
 
-  @override
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Error'),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFF1D1E33),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_outlined,color: Color(0xff6aa4a1),),
+          icon: Icon(Icons.arrow_back_ios_new_outlined, color: Color(0xff6aa4a1)),
           onPressed: () {
             Navigator.of(context).pop(); // Navigate back to the previous screen
           },
@@ -93,7 +91,7 @@ class _AdminLoginState extends State<AdminLogin> {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Color(0xffb5d7d5),
                     borderRadius: BorderRadius.circular(20.0),
                   ),
                   child: Column(
@@ -170,7 +168,6 @@ class _AdminLoginState extends State<AdminLogin> {
       ),
     );
   }
-
 
   @override
   void dispose() {

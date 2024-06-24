@@ -255,7 +255,7 @@ class _AdminCollegePageState extends State<AdminCollegePage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => AddCollege()),
+            MaterialPageRoute(builder: (context) => AddCollegeScreen(token: 'admintoken',)),
           );
         },
         backgroundColor: Colors.white, // Background color of the button
