@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:async/async.dart';
 import 'package:event_app_mobile/api_constants.dart';
 import 'package:event_app_mobile/models/adminCollege.dart';
 import 'package:event_app_mobile/models/adminModel.dart';
@@ -7,6 +9,7 @@ import 'package:event_app_mobile/models/publicEventModel.dart';
 import 'package:event_app_mobile/models/userModel.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -318,7 +321,36 @@ class AdminService {
       throw Exception('Failed to delete user');
     }
   }
-}
+
+    Future<Map<String, dynamic>> addCollege(Map<String, String> data, File image, String token) async {
+      final uri = Uri.parse('${ApiConstants.baseUrl}/api/college/addCollege');
+      var request = http.MultipartRequest('POST', uri);
+
+      // Attach the image file
+      var stream = http.ByteStream(DelegatingStream(image.openRead()));
+      var length = await image.length();
+      var multipartFile = http.MultipartFile('image', stream, length, filename: basename(image.path));
+      request.files.add(multipartFile);
+
+      // Attach the rest of the data
+      data.forEach((key, value) {
+        request.fields[key] = value;
+      });
+
+      // Attach the token
+      request.headers['Authorization'] = 'Bearer $token'; // Ensure correct header format
+
+      // Send the request
+      var response = await request.send();
+      var responseData = await http.Response.fromStream(response);
+
+      if (responseData.statusCode == 200) {
+        return json.decode(responseData.body);
+      } else {
+        throw Exception('Failed to add college: ${responseData.body}');
+      }
+    }
+  }
 
 
 

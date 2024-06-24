@@ -20,37 +20,24 @@ class _UserLoginState extends State<UserLogin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Gradient top half background
-          Container(
-            height: MediaQuery.of(context).size.height / 2,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Color(0xFF1D1E33),
-                  Color(0xFF6AA4A1),
-                ],
-              ),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(50),
-                bottomRight: Radius.circular(50),
-              ),
-            ),
+      appBar: AppBar(
+        backgroundColor: Color(0xFF1D1E33),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_new_outlined,color: Color(0xff6aa4a1),),
+          onPressed: () {
+            Navigator.of(context).pop(); // Navigate back to the previous screen
+          },
+        ), // You can customize the AppBar further if needed
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF1D1E33), Color(0xff6aa4a1)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
-          // Back arrow
-          Positioned(
-            top: 40,
-            left: 10,
-            child: IconButton(
-              icon: Icon(Icons.arrow_back_ios_new_outlined, color: Colors.white),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ),
-          // Login form
-          Center(
+        ),
+          child:Center(
             child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -59,7 +46,7 @@ class _UserLoginState extends State<UserLogin> {
                     padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
                     margin: EdgeInsets.symmetric(horizontal: 20.0),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Color(0xffb5d7d5),
                       borderRadius: BorderRadius.circular(20.0),
                       boxShadow: [
                         BoxShadow(
@@ -139,27 +126,26 @@ class _UserLoginState extends State<UserLogin> {
                             ),
                           ),
                         ),
+                        SizedBox(height: 20.0),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => UserRegisterPage()),
+                            );
+                          },
+                          child: Text(
+                            'Don\'t have an account? Sign Up',
+                            style: TextStyle(color: Color(0xFF1D1E33),fontWeight: FontWeight.bold),
+                          ),
+                        ),
                       ],
-                    ),
-                  ),
-                  SizedBox(height: 20.0),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => UserRegisterPage()),
-                      );
-                    },
-                    child: Text(
-                      'Don\'t have an account? Sign Up',
-                      style: TextStyle(color: Color(0xFF1D1E33)),
                     ),
                   ),
                 ],
               ),
             ),
           ),
-        ],
       ),
     );
   }
