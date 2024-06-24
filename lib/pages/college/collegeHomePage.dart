@@ -1,7 +1,6 @@
 import 'package:event_app_mobile/pages/college/profilePage.dart';
 import 'package:event_app_mobile/pages/college/studentDetails.dart';
 import 'package:flutter/material.dart';
-import 'certificatePage.dart';
 import 'eventPage.dart';
 import 'eventhistory.dart';
 
@@ -57,5 +56,15 @@ class _CollegeMenuState extends State<CollegeMenu> {
         onTap: _onItemTapped,
       ),
     );
+  }
+}
+
+
+class CertificatePage extends StatelessWidget {
+  const CertificatePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
   }
 }
