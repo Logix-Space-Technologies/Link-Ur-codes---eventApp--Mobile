@@ -50,18 +50,113 @@ class _StudentEventViewState extends State<StudentEventView> {
     return '${date.day}/${date.month}/${date.year}';
   }
 
-  void handleFeedback(String eventId, String user_id) {
-    Navigator.pushNamed(context, '/studentfeedback', arguments: {
-      'eventId': eventId,
-      'user_id': user_id,
-    });
+  void handleFeedback(String eventId, String userId) async {
+    // Retrieve user token from SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('user_token') ?? '';
+
+    try {
+      // Send POST request to the backend API for feedback submission
+      final response = await http.post(
+        Uri.parse('${ApiConstants.baseUrl}/api/feedback/addfeedbackstud'),
+        headers: {
+          'Content-Type': 'application/json',
+          'token': token,
+        },
+        body: jsonEncode({
+          'eventId': eventId,
+          'userId': userId,
+        }),
+      );
+
+      // Handle response based on HTTP status code and data
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['status'] == 'success') {
+          // Show a success dialog if feedback submission is successful
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('Feedback Submitted'),
+              content: Text('Your feedback has been successfully submitted.'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            ),
+          );
+        } else {
+          // Throw an exception if feedback submission fails
+          throw Exception('Failed to add feedback: ${data['message']}');
+        }
+      } else {
+        // Throw an exception if HTTP request fails
+        throw Exception('Failed to add feedback: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Catch and handle any exceptions that occur during feedback submission
+      print('Error adding feedback: $e');
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text('Failed to submit feedback. Please try again later.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
-  void handleSessions(String eventId, String user_id) {
-    Navigator.pushNamed(context, '/sessions', arguments: {
-      'eventId': eventId,
-      'user_id': user_id,
-    });
+  void showFeedbackDialog(String eventId) {
+    String feedbackText = '';
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Submit Feedback'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            TextField(
+              decoration: InputDecoration(
+                labelText: 'Enter your feedback',
+                hintText: 'Type here...',
+              ),
+              onChanged: (value) {
+                feedbackText = value;
+              },
+            ),
+          ],
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              // Call handleFeedback with eventId and feedbackText
+              handleFeedback(eventId, feedbackText);
+              Navigator.of(context).pop();
+            },
+            child: Text('Submit'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -72,14 +167,19 @@ class _StudentEventViewState extends State<StudentEventView> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(
-              width: 5,
+            SizedBox(width: 5),
+            Text(
+              'Private Events',
+              style: TextStyle(color: Color(0xFFFFFFFF), fontWeight: FontWeight.bold),
             ),
-            Text('Private Events',style: TextStyle(color:  Color(0xFFFFFFFF),fontWeight: FontWeight.bold),),
           ],
         ),
-        leading: IconButton(onPressed: (){ Navigator.pop(context);}, icon:Icon(Icons.arrow_back_ios_new,color:  Color(
-            0xFFFFFFFF),)),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.arrow_back_ios_new, color: Color(0xFFFFFFFF)),
+        ),
       ),
       body: FutureBuilder<List<PrivateEvents>>(
         future: futureEvents,
@@ -102,12 +202,14 @@ class _StudentEventViewState extends State<StudentEventView> {
                 final event = events[index];
                 return Card(
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Image.network(
-                        '${ApiConstants.baseUrl}/${event.eventPrivateImage}',
-                        width: double.infinity,
-                        height: 150,
-                        fit: BoxFit.cover,
+                      Expanded(
+                        child: Image.network(
+                          '${ApiConstants.baseUrl}/${event.eventPrivateImage.replaceAll('\\', '/')}',
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -124,9 +226,9 @@ class _StudentEventViewState extends State<StudentEventView> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          IconButton(
-                            icon: Icon(Icons.feedback),
-                            onPressed: () => handleFeedback(event.eventPrivateId as String, ''),
+                          TextButton(
+                            onPressed: () => showFeedbackDialog(event.eventPrivateId.toString()),
+                            child: Text('Give Feedback'),
                           ),
                         ],
                       ),
