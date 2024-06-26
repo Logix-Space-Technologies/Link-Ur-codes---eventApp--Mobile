@@ -50,18 +50,12 @@ class _StudentEventViewState extends State<StudentEventView> {
     return '${date.day}/${date.month}/${date.year}';
   }
 
-  void handleFeedback(String eventId, String user_id) {
-    Navigator.pushNamed(context, '/studentfeedback', arguments: {
-      'eventId': eventId,
-      'user_id': user_id,
-    });
-  }
-
-  void handleSessions(String eventId, String user_id) {
-    Navigator.pushNamed(context, '/sessions', arguments: {
-      'eventId': eventId,
-      'user_id': user_id,
-    });
+  void handleFeedback(String eventId, String userId) {
+    Navigator.pushNamed(
+      context,
+      '/studentfeedback',
+      arguments: {'eventId': eventId, 'userId': userId},
+    );
   }
 
   @override
@@ -72,14 +66,22 @@ class _StudentEventViewState extends State<StudentEventView> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(
-              width: 5,
+            SizedBox(width: 5),
+            Text(
+              'Private Events',
+              style: TextStyle(
+                color: Color(0xFFFFFFFF),
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            Text('Private Events',style: TextStyle(color:  Color(0xFFFFFFFF),fontWeight: FontWeight.bold),),
           ],
         ),
-        leading: IconButton(onPressed: (){ Navigator.pop(context);}, icon:Icon(Icons.arrow_back_ios_new,color:  Color(
-            0xFFFFFFFF),)),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.arrow_back_ios_new, color: Color(0xFFFFFFFF)),
+        ),
       ),
       body: FutureBuilder<List<PrivateEvents>>(
         future: futureEvents,
@@ -100,35 +102,52 @@ class _StudentEventViewState extends State<StudentEventView> {
               itemCount: events.length,
               itemBuilder: (context, index) {
                 final event = events[index];
+                final imageUrl = '${ApiConstants.baseUrl}/${event.eventPrivateImage}'.replaceAll("\\", "/");
+
                 return Card(
                   child: Column(
                     children: [
                       Image.network(
-                        '${ApiConstants.baseUrl}/${event.eventPrivateImage}',
+                        imageUrl,
                         width: double.infinity,
                         height: 150,
                         fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Icon(Icons.error);
+                        },
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(event.eventPrivateName, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                            Text(event.eventPrivateDescription, maxLines: 2, overflow: TextOverflow.ellipsis),
+                            Text(
+                              event.eventPrivateName,
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              event.eventPrivateDescription,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                             Text('Date: ${formatDate(event.eventPrivateDate)}'),
                             Text('Time: ${event.eventPrivateTime}'),
                           ],
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.feedback),
-                            onPressed: () => handleFeedback(event.eventPrivateId as String, ''),
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.feedback),
+                                onPressed: () => handleFeedback(event.eventPrivateId.toString(), 'user_id_here'), // Replace with the actual user ID
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ],
                   ),
